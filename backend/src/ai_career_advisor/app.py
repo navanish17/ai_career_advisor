@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from ai_career_advisor.core.logger import logger
 from ai_career_advisor.core.config import settings
+from ai_career_advisor.core.middleware import add_middlewares
+
 
 def create_app() -> FastAPI:
     """
@@ -14,6 +16,8 @@ def create_app() -> FastAPI:
         debug=settings.DEBUG,
         version="1.0.0"
     )
+
+    add_middlewares(app)
 
     # Placeholder: routers will be added here later
     # app.include_router(...)

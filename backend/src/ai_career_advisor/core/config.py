@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api"
     PROJECT_NAME: str = "AI Career Advisor"
 
+    JWT_SECRET: str = "super-secret-key-change-this"
+    JWT_ALGORITHM: str = "HS256"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

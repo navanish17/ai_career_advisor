@@ -27,3 +27,85 @@
  2025-12-07 14:10:34 | INFO | middleware | POST /api/auth/signup → 200 (773.31 ms)
  2025-12-07 14:10:50 | INFO | middleware | GET /api/auth/signup → 405 (0.00 ms)
  2025-12-07 14:12:56 | INFO | middleware | POST /api/auth/signup → 200 (629.38 ms)
+ 2025-12-07 16:42:45 | INFO | app | Creating FastAPI application...
+ 2025-12-07 16:42:45 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 16:44:09 | INFO | app | Creating FastAPI application...
+ 2025-12-07 16:44:09 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 16:50:27 | INFO | app | Creating FastAPI application...
+ 2025-12-07 16:50:27 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 16:50:33 | INFO | middleware | GET / → 404 (2.01 ms)
+ 2025-12-07 16:50:40 | INFO | middleware | GET /docs → 200 (2.50 ms)
+ 2025-12-07 16:50:40 | INFO | middleware | GET /openapi.json → 200 (40.16 ms)
+ 2025-12-07 16:51:48 | INFO | middleware | POST /api/auth/signup → 200 (744.61 ms)
+ 2025-12-07 16:52:17 | INFO | auth | Login trial for the user : ram@gmail.com
+ 2025-12-07 16:52:18 | INFO | middleware | POST /api/auth/login → 200 (646.50 ms)
+ 2025-12-07 17:14:57 | INFO | app | Creating FastAPI application...
+ 2025-12-07 17:14:57 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 17:15:04 | INFO | app | Creating FastAPI application...
+ 2025-12-07 17:15:04 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 17:15:29 | INFO | app | Creating FastAPI application...
+ 2025-12-07 17:15:29 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 17:17:36 | INFO | app | Creating FastAPI application...
+ 2025-12-07 17:17:36 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 17:18:21 | INFO | app | Creating FastAPI application...
+ 2025-12-07 17:18:21 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 17:18:25 | INFO | middleware | GET / → 404 (0.81 ms)
+ 2025-12-07 17:18:30 | INFO | middleware | GET /docs → 200 (0.52 ms)
+ 2025-12-07 17:18:31 | INFO | middleware | GET /openapi.json → 200 (32.71 ms)
+ 2025-12-07 17:19:15 | INFO | middleware | GET /api/auth/me → 401 (0.00 ms)
+ 2025-12-07 17:23:01 | INFO | auth | Login trial for the user : ram@gmail.com
+ 2025-12-07 17:23:01 | INFO | middleware | POST /api/auth/login → 200 (791.32 ms)
+ 2025-12-07 17:24:24 | INFO | middleware | POST /api/auth/login → 422 (4.38 ms)
+ 2025-12-07 17:29:00 | INFO | app | Creating FastAPI application...
+ 2025-12-07 17:29:00 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 17:29:58 | INFO | app | Creating FastAPI application...
+ 2025-12-07 17:29:58 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 17:30:02 | INFO | middleware | GET / → 404 (0.52 ms)
+ 2025-12-07 17:30:09 | INFO | middleware | GET /docs → 200 (1.01 ms)
+ 2025-12-07 17:30:09 | INFO | middleware | GET /openapi.json → 200 (26.69 ms)
+ 2025-12-07 19:17:10 | INFO | app | Creating FastAPI application...
+ 2025-12-07 19:17:10 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 19:17:35 | INFO | middleware | GET / → 404 (1.00 ms)
+ 2025-12-07 19:17:35 | INFO | middleware | GET /favicon.ico → 404 (0.00 ms)
+ 2025-12-07 19:17:45 | INFO | middleware | GET /docs → 200 (1.00 ms)
+ 2025-12-07 19:17:45 | INFO | middleware | GET /openapi.json → 200 (33.56 ms)
+ 2025-12-07 19:18:41 | INFO | auth | Login trial for the user : ram@gmail.com
+ 2025-12-07 19:18:41 | INFO | middleware | POST /api/auth/login → 200 (398.40 ms)
+ 2025-12-07 19:19:28 | INFO | middleware | GET /api/auth/me → 401 (0.42 ms)
+ 2025-12-07 19:27:06 | INFO | app | Creating FastAPI application...
+ 2025-12-07 19:27:06 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 19:29:03 | INFO | app | Creating FastAPI application...
+ 2025-12-07 19:29:03 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 19:29:07 | INFO | middleware | GET / → 404 (0.98 ms)
+ 2025-12-07 19:29:14 | INFO | middleware | GET /docs → 200 (1.00 ms)
+ 2025-12-07 19:29:14 | INFO | middleware | GET /openapi.json → 200 (22.92 ms)
+ 2025-12-07 19:30:07 | INFO | auth | Login trial for the user : ram@gmail.com
+ 2025-12-07 19:30:07 | INFO | middleware | POST /api/auth/login → 200 (318.32 ms)
+ 2025-12-07 19:31:10 | INFO | middleware | GET /api/auth/me → 401 (0.00 ms)
+ 2025-12-07 19:31:18 | INFO | middleware | GET /api/auth/me → 401 (0.00 ms)
+ 2025-12-07 19:39:15 | INFO | app | Creating FastAPI application...
+ 2025-12-07 19:39:15 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 19:40:47 | INFO | app | Creating FastAPI application...
+ 2025-12-07 19:40:47 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 19:41:22 | INFO | app | Creating FastAPI application...
+ 2025-12-07 19:41:22 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 19:53:35 | INFO | app | Creating FastAPI application...
+ 2025-12-07 19:53:35 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 20:58:14 | INFO | app | Creating FastAPI application...
+ 2025-12-07 20:58:14 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 20:58:18 | INFO | middleware | GET / → 404 (1.00 ms)
+ 2025-12-07 20:58:24 | INFO | middleware | GET /docs → 200 (0.00 ms)
+ 2025-12-07 20:58:24 | INFO | middleware | GET /openapi.json → 200 (21.96 ms)
+ 2025-12-07 20:58:50 | INFO | auth | Login trial for the user : ram@gmail.com
+ 2025-12-07 20:58:50 | INFO | middleware | POST /api/auth/login → 200 (321.10 ms)
+ 2025-12-07 21:00:14 | INFO | app | Creating FastAPI application...
+ 2025-12-07 21:00:14 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 21:00:19 | INFO | app | Creating FastAPI application...
+ 2025-12-07 21:00:19 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 21:00:37 | INFO | middleware | GET /docs → 200 (1.00 ms)
+ 2025-12-07 21:00:37 | INFO | middleware | GET /openapi.json → 200 (42.59 ms)
+ 2025-12-07 21:04:17 | INFO | auth | Login trial for the user : ram@gmail.com
+ 2025-12-07 21:04:18 | INFO | middleware | POST /api/auth/login → 200 (721.36 ms)
+ 2025-12-07 21:08:43 | INFO | app | Creating FastAPI application...
+ 2025-12-07 21:08:43 | INFO | app | FastAPI application created successfully.
+ 2025-12-07 21:08:52 | INFO | middleware | GET /api/auth/me → 200 (79.30 ms)

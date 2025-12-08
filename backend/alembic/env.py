@@ -3,6 +3,9 @@ from logging.config import fileConfig
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+from ai_career_advisor.core.database import Base 
+from ai_career_advisor.models import user, profile
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from ai_career_advisor.core.database import Base
 import ai_career_advisor.models 

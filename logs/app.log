@@ -109,3 +109,27 @@
  2025-12-07 21:08:43 | INFO | app | Creating FastAPI application...
  2025-12-07 21:08:43 | INFO | app | FastAPI application created successfully.
  2025-12-07 21:08:52 | INFO | middleware | GET /api/auth/me → 200 (79.30 ms)
+ 2025-12-10 15:51:04 | INFO | app | Creating FastAPI application...
+ 2025-12-10 15:51:04 | INFO | app | FastAPI application created successfully.
+ 2025-12-10 16:04:06 | INFO | app | Creating FastAPI application...
+ 2025-12-10 16:04:06 | INFO | app | FastAPI application created successfully.
+ 2025-12-10 16:04:27 | INFO | middleware | GET / → 404 (1.21 ms)
+ 2025-12-10 16:04:27 | INFO | middleware | GET /favicon.ico → 404 (0.00 ms)
+ 2025-12-10 16:04:33 | INFO | middleware | GET /docs → 200 (2.00 ms)
+ 2025-12-10 16:04:33 | INFO | middleware | GET /openapi.json → 200 (93.80 ms)
+ 2025-12-10 16:56:24 | INFO | app | Creating FastAPI application...
+ 2025-12-10 16:56:24 | INFO | app | FastAPI application created successfully.
+ 2025-12-10 16:56:28 | INFO | middleware | GET / → 404 (1.31 ms)
+ 2025-12-10 16:56:33 | INFO | middleware | GET /docs → 200 (0.00 ms)
+ 2025-12-10 16:56:33 | INFO | middleware | GET /openapi.json → 200 (38.54 ms)
+ 2025-12-10 16:56:45 | INFO | middleware | POST /api/auth/signup → 200 (409.52 ms)
+ 2025-12-10 16:58:46 | INFO | auth | Login trial for the user : shyam@gmail.com
+ 2025-12-10 16:58:46 | INFO | middleware | POST /api/auth/login → 200 (335.77 ms)
+ 2025-12-10 17:02:02 | INFO | middleware | GET /api/auth/me → 200 (7.19 ms)
+ 2025-12-10 17:07:41 | INFO | app | Creating FastAPI application...
+ 2025-12-10 17:07:41 | INFO | app | FastAPI application created successfully.
+ 2025-12-10 17:07:52 | INFO | middleware | GET /api/profile/profile → 200 (47.31 ms)
+ 2025-12-10 17:13:54 | INFO | app | Creating FastAPI application...
+ 2025-12-10 17:13:54 | INFO | app | FastAPI application created successfully.
+ 2025-12-10 17:14:09 | INFO | middleware | PUT /api/profile/profile → 200 (71.02 ms)
+ 2025-12-10 17:15:39 | INFO | middleware | POST /api/profile/profile → 400 (5.99 ms)

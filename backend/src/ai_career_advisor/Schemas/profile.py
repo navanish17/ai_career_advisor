@@ -7,14 +7,11 @@ class ProfileBase(BaseModel):
     language: Optional[str] = None
     known_interests: Optional[List[str]] = None
 
-
 class ProfileCreate(ProfileBase):
     pass
 
-
 class ProfileUpdate(ProfileBase):
     pass
-
 
 class ProfileResponse(ProfileBase):
     id: int
@@ -22,4 +19,4 @@ class ProfileResponse(ProfileBase):
 
     class Config:
         from_attributes = True
-
+    

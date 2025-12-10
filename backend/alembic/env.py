@@ -1,18 +1,15 @@
-from logging.config import fileConfig
-
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
-from ai_career_advisor.core.database import Base 
-from ai_career_advisor.models import user, profile
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from logging.config import fileConfig
+
+# Add project root to PYTHONPATH
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.append(BASE_DIR)
 
 from ai_career_advisor.core.database import Base
-import ai_career_advisor.models 
+from ai_career_advisor.models import user, profile, quiz_question  # IMPORT ALL MODELS
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
+from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 # this is the Alembic Config object, which provides

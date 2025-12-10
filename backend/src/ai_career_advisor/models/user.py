@@ -13,5 +13,8 @@ class User(Base):
     profile = relationship("Profile", back_populates="user", uselist=False)
 
 
+
     # additional metadata fields
     created_at: Mapped[str] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+

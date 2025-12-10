@@ -21,3 +21,7 @@ class Profile(Base):
     )
 
     user = relationship("User", back_populates="profile")
+   
+
+
+

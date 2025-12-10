@@ -13,8 +13,9 @@ from sqlalchemy.orm import DeclarativeBase
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "sqlite+aiosqlite:///./dev.db"
+    "sqlite+aiosqlite:///D:/Cdac_project/project_02/dev.db"
 )
+
 
 # Base class for all orm model
 

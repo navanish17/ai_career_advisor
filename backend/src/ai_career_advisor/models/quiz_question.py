@@ -3,7 +3,7 @@ from ai_career_advisor.core.database import Base
 
 class QuizQuestion(Base):
     __tablename__ = "quiz_questions"
-
+    
     id = Column(Integer, primary_key = True, index = True)
     question_text = Column(String, nullable = False)
     options = Column(JSON, nullable = False)

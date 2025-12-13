@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     SENDGRID_API_KEY: Optional[str] = None
     FROM_EMAIL: Optional[str] = "no-reply@ai-advisor.local"
 
+    GEMINI_API_KEY: Optional[str] = None
+
     API_PREFIX: str = "/api"
     PROJECT_NAME: str = "AI Career Advisor"
 

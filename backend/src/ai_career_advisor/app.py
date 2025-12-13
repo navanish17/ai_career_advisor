@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from ai_career_advisor.core.logger import logger
 from ai_career_advisor.core.config import settings
 from ai_career_advisor.core.middleware import add_middlewares
+import ai_career_advisor.models
 
 
 def create_app() -> FastAPI:

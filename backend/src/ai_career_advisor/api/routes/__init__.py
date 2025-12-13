@@ -6,6 +6,7 @@ from .profile import router as profile
 from .quiz import router as quiz
 from .roadmap import router as roadmap
 from .scholarships import router as scholarships
+from .degree import router as degree_router
 
 __all__ = [
     "auth",
@@ -16,4 +17,5 @@ __all__ = [
     "quiz",
     "roadmap",
     "scholarships",
+    "degree_router",
 ]

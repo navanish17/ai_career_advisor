@@ -1,3 +1,6 @@
-# This file marks models as module, no imports needed
-# from .quiz_question import QuizQuestion
-# from .user import User
+from .user import User
+from .profile import Profile
+from .quiz_question import QuizQuestion
+from .degree import Degree
+
+

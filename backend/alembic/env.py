@@ -7,7 +7,9 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src'))
 sys.path.append(BASE_DIR)
 
 from ai_career_advisor.core.database import Base
-from ai_career_advisor.models import user, profile, quiz_question  # IMPORT ALL MODELS
+import ai_career_advisor.models
+  # loads ALL models automatically
+  # IMPORT ALL MODELS
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context

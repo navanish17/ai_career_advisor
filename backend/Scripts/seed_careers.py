@@ -195,7 +195,8 @@ async def seed_careers():
             result = await session.execute(
                 select(Branch).where(Branch.name == branch_name)
             )
-            branch = result.scalar_one_or_none()
+            branch = result.scalars().first()
+
 
             if not branch:
                 logger.warning(f"Branch not found: {branch_name}")

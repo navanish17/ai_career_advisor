@@ -196,3 +196,27 @@
  2025-12-13 17:29:03 | INFO | middleware | GET /api/degree/api/degree/all → 200 (5.54 ms)
  2025-12-13 17:29:28 | INFO | middleware | GET /api/degree/api/degree/from-stream/science → 200 (27.39 ms)
  2025-12-13 17:29:43 | INFO | middleware | GET /api/degree/api/degree/from-stream/commerce → 200 (31.11 ms)
+ 2025-12-14 21:30:05 | INFO | app | Creating FastAPI application...
+ 2025-12-14 21:30:05 | INFO | app | FastAPI application created successfully.
+ 2025-12-14 21:30:09 | INFO | middleware | GET / → 404 (1.47 ms)
+ 2025-12-14 21:30:09 | INFO | middleware | GET /favicon.ico → 404 (0.00 ms)
+ 2025-12-14 21:30:13 | INFO | middleware | GET /docs → 200 (0.00 ms)
+ 2025-12-14 21:30:13 | INFO | middleware | GET /openapi.json → 200 (108.25 ms)
+ 2025-12-14 21:31:18 | INFO | auth | Login trial for the user : shyam@gmail.com
+ 2025-12-14 21:31:19 | INFO | middleware | POST /api/auth/login → 200 (779.58 ms)
+ 2025-12-14 21:31:50 | INFO | branch | API called: get branches for degree_id=1
+ 2025-12-14 21:31:50 | INFO | branch_service | Fetching branches for degree_id=1
+ 2025-12-14 21:31:50 | INFO | branch_service | Found 5 branches for degree_id=1
+ 2025-12-14 21:31:50 | INFO | middleware | GET /api/branch/from-degree/1 → 200 (38.80 ms)
+ 2025-12-14 21:32:40 | INFO | branch | API called: get branches for degree_id=2
+ 2025-12-14 21:32:40 | INFO | branch_service | Fetching branches for degree_id=2
+ 2025-12-14 21:32:40 | INFO | branch_service | Found 4 branches for degree_id=2
+ 2025-12-14 21:32:40 | INFO | middleware | GET /api/branch/from-degree/2 → 200 (10.45 ms)
+ 2025-12-14 21:32:54 | INFO | branch | API called: get branches for degree_id=3
+ 2025-12-14 21:32:54 | INFO | branch_service | Fetching branches for degree_id=3
+ 2025-12-14 21:32:54 | INFO | branch_service | Found 3 branches for degree_id=3
+ 2025-12-14 21:32:54 | INFO | middleware | GET /api/branch/from-degree/3 → 200 (40.34 ms)
+ 2025-12-14 21:33:01 | INFO | branch | API called: get branches for degree_id=5
+ 2025-12-14 21:33:01 | INFO | branch_service | Fetching branches for degree_id=5
+ 2025-12-14 21:33:01 | INFO | branch_service | Found 3 branches for degree_id=5
+ 2025-12-14 21:33:01 | INFO | middleware | GET /api/branch/from-degree/5 → 200 (12.82 ms)

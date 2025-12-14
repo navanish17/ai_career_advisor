@@ -3,11 +3,6 @@ from ai_career_advisor.core.logger import logger
 from ai_career_advisor.api.routes import agent, auth,degree_router, career, colleges, profile,quiz,roadmap,scholarships,branch
 import ai_career_advisor.models
 
-
-
-
-
-
 app = create_app()
 
 #include routers

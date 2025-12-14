@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, func
+from sqlalchemy import Column, Integer, Float, String, Text, Boolean, DateTime, func
 from ai_career_advisor.core.database import Base
 
 class Degree(Base):
@@ -8,7 +8,7 @@ class Degree(Base):
     name = Column(String(120), unique=True, nullable=False)
     stream = Column(String(50), index=True, nullable=False) 
     short_description = Column(Text, nullable=True) 
-    duration_years = Column(Integer, nullable=True)
+    duration_years = Column(Float, nullable=True)
     eligibility = Column(String(255), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
 

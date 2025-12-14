@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     ENV: str = "development"
     DEBUG: bool = True
 
-    DATABASE_URL: str = "sqlite+aiosqlite:///./dev.db"
+    DATABASE_URL: str = "sqlite:///D:/Cdac_project/project_02/dev.db"
 
     REDIS_URL: Optional[str] = None
 

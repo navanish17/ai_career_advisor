@@ -6,7 +6,7 @@ class DegreeBase(BaseModel):
     name: str
     stream: str
     short_description: Optional[str] = None
-    duration_years: Optional[int] = None
+    duration_years: Optional[float] = None
     eligibility: Optional[str] = None
     is_active: bool = True
 

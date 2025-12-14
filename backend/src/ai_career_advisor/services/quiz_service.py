@@ -7,59 +7,67 @@ from ai_career_advisor.Schemas.quiz import QuizSubmitRequest, QuizResultResponse
 from ai_career_advisor.core.logger import logger
 
 
+# Stream Mapping (FINAL)
+INTEREST_TO_STREAM = {
+    "technology": "science",
+    "science": "science",
+    "commerce": "commerce",
+    "arts": "arts",
+    "social": "arts",
+    "sports": "arts"
+}
+
+
 class QuizService:
 
     @staticmethod
-    async def get_all_questions(db:AsyncSession) -> List[QuizQuestion]:
-        """it will fetch all the question from the database"""
-        logger.info("Fetching all the question from the database")
-        result  = await db.execute(select(QuizQuestion))
+    async def get_all_questions(db: AsyncSession) -> List[QuizQuestion]:
+        logger.info("Fetching all quiz questions")
+        result = await db.execute(select(QuizQuestion))
         return result.scalars().all()
-    
+
     @staticmethod
     async def evaluate_quiz(
         db: AsyncSession,
-        payload: QuizSubmitRequest)-> QuizResultResponse:
+        payload: QuizSubmitRequest
+    ) -> QuizResultResponse:
 
-        logger.info("Evaluating quiz submission...")
+        logger.info("Evaluating quiz submission")
 
+        # Fetch all questions
         result = await db.execute(select(QuizQuestion))
         questions = {q.id: q for q in result.scalars().all()}
 
         scores: Dict[str, int] = {}
 
+        # Calculate interest scores
         for answer in payload.answers:
             q_id = answer["question_id"]
             selected_option = answer["selected_option"]
 
             if q_id not in questions:
-                logger.warning(f"Invalid question_id: {q_id}")
                 continue
 
             question = questions[q_id]
+            option_key = str(selected_option)
 
-            option_str = str(selected_option)
-
-            if option_str not in question.score_mapping:
-                logger.warning(f"Invalid option index: {selected_option} for question {q_id}")
+            if option_key not in question.score_mapping:
                 continue
 
-            option_scores = question.score_mapping[option_str]
+            for interest, value in question.score_mapping[option_key].items():
+                scores[interest] = scores.get(interest, 0) + value
 
-            # accumulate score
-            for interest, val in option_scores.items():
-                scores[interest] = scores.get(interest, 0) + val
+        if not scores:
+            return QuizResultResponse(stream=None)
 
-        # sort top interests
-        sorted_interests = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-        top_interests = [i[0] for i in sorted_interests[:3]]  # top 3
+        # Get top interest
+        top_interest = max(scores, key=scores.get)
 
-        logger.info(f"Quiz evaluated. Top interests: {top_interests}")
+        # Map interest → stream
+        stream = INTEREST_TO_STREAM.get(top_interest)
 
-        # Return response (recommendation = None for now)
+        logger.info(f"Quiz result → Interest: {top_interest}, Stream: {stream}")
+
         return QuizResultResponse(
-            top_interests=top_interests,
-            scores=scores,
-            recommendation=None
+            stream=stream
         )
-

@@ -15,8 +15,6 @@ class QuizSubmitRequest(BaseModel):
     answers: List[Dict[str,int]]
 
 class QuizResultResponse(BaseModel):
-    """format in Response sent to frontend"""
-    top_interests : List[str]
-    scores: Dict[str,int]
-    recommendation: Optional[str] = None
+    stream: str | None
+
     

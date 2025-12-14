@@ -29,3 +29,10 @@ class Branch(Base):
 
     # relationship
     degree = relationship("Degree", backref="branches")
+
+    careers = relationship(
+    "Career",
+    back_populates="branch",
+    cascade="all, delete-orphan"
+)
+

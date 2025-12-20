@@ -8,6 +8,8 @@ from .roadmap import router as roadmap
 from .scholarships import router as scholarships
 from .degree import router as degree_router
 from .branch import router as branch
+from .career_insight import router as career_insight
+
 
 
 __all__ = [
@@ -21,4 +23,5 @@ __all__ = [
     "scholarships",
     "degree_router",
     "branch",
+    "career_insight",
 ]

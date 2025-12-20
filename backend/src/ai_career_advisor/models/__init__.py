@@ -4,6 +4,8 @@ from .quiz_question import QuizQuestion
 from .degree import Degree
 from .branch import Branch
 from .career import Career
+from .career_insight import CareerInsight
+
 
 
 

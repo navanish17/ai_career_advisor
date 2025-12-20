@@ -24,3 +24,5 @@ class Career(Base):
 
     # relationships
     branch = relationship("Branch", back_populates="careers")
+    insight = relationship("CareerInsight", back_populates="career", uselist=False)
+

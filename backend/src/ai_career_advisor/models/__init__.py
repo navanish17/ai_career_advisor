@@ -5,6 +5,9 @@ from .degree import Degree
 from .branch import Branch
 from .career import Career
 from .career_insight import CareerInsight
+from .roadmap import Roadmap
+from .roadmap_step import RoadmapStep
+
 
 
 

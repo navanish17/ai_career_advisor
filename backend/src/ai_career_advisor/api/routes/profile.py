@@ -1,5 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from ai_career_advisor.Schemas.profile import StreamUpdateRequest
+from ai_career_advisor.Schemas.profile import ClassLevelUpdateRequest
+
+
 
 from ai_career_advisor.core.database import get_db
 from ai_career_advisor.services.profile_service import ProfileService
@@ -36,6 +40,42 @@ async def update_my_profile(
 
     updated = await ProfileService.update_profile(db, profile, data)
     return updated
+
+@router.post("/class-level")
+async def update_class_level(
+    payload: ClassLevelUpdateRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    updated_profile = await ProfileService.update_class_level(
+        db=db,
+        user_id=current_user.id,
+        class_level=payload.class_level
+    )
+
+    return {
+        "message": "Class level updated successfully",
+        "class_level": updated_profile.class_level
+    }
+
+
+@router.post("/stream")
+async def update_stream_for_12th_student(
+    payload: StreamUpdateRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    updated_profile = await ProfileService.update_stream(
+        db=db,
+        user_id=current_user.id,
+        stream=payload.stream
+    )
+
+    return {
+        "message": "Stream updated successfully",
+        "stream": updated_profile.stream
+    }
+
 
 @router.post("", response_model = ProfileResponse)
 

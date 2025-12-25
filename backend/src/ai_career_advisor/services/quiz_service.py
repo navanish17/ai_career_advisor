@@ -5,6 +5,8 @@ from typing import Dict, List
 from ai_career_advisor.models.quiz_question import QuizQuestion
 from ai_career_advisor.Schemas.quiz import QuizSubmitRequest, QuizResultResponse
 from ai_career_advisor.core.logger import logger
+from ai_career_advisor.models.profile import Profile
+
 
 
 # Stream Mapping (FINAL)
@@ -28,9 +30,11 @@ class QuizService:
 
     @staticmethod
     async def evaluate_quiz(
-        db: AsyncSession,
-        payload: QuizSubmitRequest
-    ) -> QuizResultResponse:
+    db: AsyncSession,
+    payload: QuizSubmitRequest,
+    user_id: int
+) -> QuizResultResponse:
+
 
         logger.info("Evaluating quiz submission")
 
@@ -68,6 +72,15 @@ class QuizService:
 
         logger.info(f"Quiz result → Interest: {top_interest}, Stream: {stream}")
 
+        result = await db.execute(
+        select(Profile).where(Profile.user_id == user_id))
+        profile = result.scalar_one()
+
+        profile.stream = stream
+        await db.commit()
+
+        logger.info(f"Stream '{stream}' saved to profile for user {user_id}")
+
         return QuizResultResponse(
             stream=stream
-        )
+        )   

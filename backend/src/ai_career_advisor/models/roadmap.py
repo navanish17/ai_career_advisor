@@ -8,7 +8,7 @@ class Roadmap(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     class_level = Column(String, nullable=False)  
     # "10th" or "12th"

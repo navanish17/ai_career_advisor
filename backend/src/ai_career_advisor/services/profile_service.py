@@ -53,6 +53,55 @@ class ProfileService:
         except Exception:
             await db.rollback()
             raise
+
+    @staticmethod
+    async def update_class_level(
+        *,
+        db: AsyncSession,
+        user_id: int,
+        class_level: str
+    ) -> Profile:
+
+        if class_level not in ["10th", "12th"]:
+            raise ValueError("Invalid class level")
+
+        result = await db.execute(
+            select(Profile).where(Profile.user_id == user_id)
+        )
+        profile = result.scalars().first()
+
+        if not profile:
+            raise Exception("Profile not found")
+
+        profile.class_level = class_level
+        await db.commit()
+        await db.refresh(profile)
+
+        return profile
+
+
+
+    @staticmethod
+    async def update_stream(
+        *,
+        db: AsyncSession,
+        user_id: int,
+        stream: str
+    ) -> Profile:
+
+        result = await db.execute(
+            select(Profile).where(Profile.user_id == user_id)
+        )
+        profile = result.scalars().first()
+
+        if not profile:
+            raise Exception("Profile not found")
+
+        profile.stream = stream
+        await db.commit()
+        await db.refresh(profile)
+
+        return profile
     
 
     @staticmethod

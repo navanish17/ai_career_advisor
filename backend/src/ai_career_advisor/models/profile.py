@@ -10,6 +10,7 @@ class Profile(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True)
 
     class_level = Column(String, nullable=True)
+    stream = Column(String, nullable=True)
     location = Column(String, nullable=True)
     language = Column(String, nullable=True)
 

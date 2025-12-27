@@ -1,7 +1,6 @@
 from ai_career_advisor.app import create_app 
 from ai_career_advisor.core.logger import logger
-from ai_career_advisor.api.routes import agent, auth,degree_router,career_insight, career, colleges, profile,quiz,roadmap,scholarships,branch
-import ai_career_advisor.models
+from ai_career_advisor.api.routes import *
 
 app = create_app()
 
@@ -10,10 +9,10 @@ app = create_app()
 app.include_router(auth, prefix="/api/auth")
 app.include_router(agent, prefix="/api/agent")
 app.include_router(career, prefix="/api/career")
-app.include_router(colleges, prefix="/api/colleges")
 app.include_router(profile, prefix="/api/profile")
 app.include_router(quiz, prefix="/api/quiz")
 app.include_router(branch)
+app.include_router(college_router, prefix="/api")
 app.include_router(career_insight)
 app.include_router(degree_router, prefix="/api/degree")
 app.include_router(roadmap, prefix="/api/roadmap")

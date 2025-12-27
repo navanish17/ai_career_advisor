@@ -9,6 +9,8 @@ from .scholarships import router as scholarships
 from .degree import router as degree_router
 from .branch import router as branch
 from .career_insight import router as career_insight
+from .colleges import router as college_router
+
 
 
 
@@ -24,4 +26,5 @@ __all__ = [
     "degree_router",
     "branch",
     "career_insight",
+    "college_router",
 ]

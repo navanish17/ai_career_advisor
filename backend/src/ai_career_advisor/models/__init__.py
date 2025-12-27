@@ -8,6 +8,8 @@ from .career_insight import CareerInsight
 from .roadmap import Roadmap
 from .roadmap_step import RoadmapStep
 from .college import College
+from .college_details import CollegeDetails
+
 
 
 

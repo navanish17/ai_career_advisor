@@ -15,89 +15,90 @@ class CollegeStrictGeminiExtractor:
     async def extract(*, college_name: str, degree: str, branch: str) -> dict:
         
         prompt = f"""
-You are a STRICT data extraction engine.
+You are a STRICT data extraction engine that ONLY extracts explicitly stated information.
 
-DO NOT GUESS. DO NOT INFER. DO NOT ASSUME.
-ONLY extract information that is EXPLICITLY written in the content.
+CORE PRINCIPLES:
+- Extract ONLY what is directly written in the source
+- DO NOT guess, infer, calculate, or approximate
+- DO NOT fabricate any data
+- If information is not found, return "Not available"
 
-COLLEGE: {college_name}
-DEGREE: {degree}
-BRANCH: {branch}
+TARGET EXTRACTION:
+College: {college_name}
+Degree: {degree}
+Branch: {branch}
 
-SOURCE PRIORITY (highest → lowest):
-1. Official .ac.in / .edu.in websites or PDFs
+NOTE: Extract data ONLY for the degree and branch specified above. Do not use data from other degrees or branches.
+
+SOURCE PRIORITY (use in this order):
+1. Official .ac.in / .edu.in domains or their PDFs
 2. Shiksha.com
 3. Careers360.com
 4. CollegeDunia.com
+* no extra source other than this 
 
-EXTRACT DATA FOR ONLY:
-→ Degree: {degree}
-→ Branch: {branch}
-
-FIELDS TO EXTRACT:
-1. Annual tuition fees
-2. Average placement package (branch-specific if available)
-3. Highest placement package (branch-specific if available)
+DATA FIELDS TO EXTRACT:
+1. Annual tuition fees (exclude hostel/mess fees)
+2. Average placement package (branch-specific preferred)
+3. Highest placement package (branch-specific preferred)
 4. Entrance exam name
-5. Cutoff (rank / percentile with year & category)
+5. Cutoff (rank/percentile with year and category)
 
-STRICT RULES:
-❌ Do NOT use data of other degrees
-❌ Do NOT use data of other branches
-❌ If branch-specific data NOT found → use overall degree data AND clearly say so
-❌ Do NOT mix hostel/mess fees with tuition fees
-❌ Do NOT calculate or approximate
-❌ Do NOT fabricate years or values
-❌ If 2024–25 or 2025–26 exists, ignore older data
-❌ If ANY verification fails → return "Not available"
+EXTRACTION RULES:
+✓ Use most recent data (2024-25 or 2025-26 preferred)
+✓ If branch-specific placement data unavailable, use overall degree data and mention note: "Overall degree data used". if doing then only if found branch related then avoid note*. 
+✓ Copy exact sentences from source as extracted_text
+✓ Include exact source URL for each field
 
-MANDATORY:
-Every extracted field MUST include:
-- exact copied sentence (extracted_text)
-- exact source URL
+✗ DO NOT mix data from different degrees or branches
+✗ DO NOT use outdated data if recent data exists
+✗ DO NOT perform calculations or estimations
+✗ DO NOT add fabricated years or values
 
-RETURN STRICT JSON ONLY (no text, no explanation):
+OUTPUT FORMAT:
+i want datain this form only {{
+  "college_name": "{college_name}",
+  "degree": "{degree}",
+  "branch": "{branch}",
 
-{{
-  "college_name": "{college_name}",
-  "degree": "{degree}",
-  "branch": "{branch}",
+  "fees": {{
+    "value": "₹X per year OR Not available",
+    "source": "exact URL OR null",
+    "extracted_text": "exact sentence copied from source OR null"
+  }},
 
-  "fees": {{
-    "value": "₹X per year OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }},
+  "avg_package": {{
+    "value": "X LPA OR Not available",
+    "source": "exact URL OR null",
+    "extracted_text": "exact sentence copied from source OR null"
+  }},
 
-  "avg_package": {{
-    "value": "X LPA OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }},
+  "highest_package": {{
+    "value": "X LPA OR Not available",
+    "source": "exact URL OR null",
+    "extracted_text": "exact sentence copied from source OR null"
+  }},
 
-  "highest_package": {{
-    "value": "X LPA OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }},
+  "entrance_exam": {{
+    "value": "Exam name OR Not available",
+    "source": "exact URL OR null",
+    "extracted_text": "exact sentence copied from source OR null"
+  }},
 
-  "entrance_exam": {{
-    "value": "Exam name OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }},
-
-  "cutoff": {{
-    "value": "Rank/percentile (year, category) OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }}
+  "cutoff": {{
+    "value": "Rank/percentile (year, category) OR Not available",
+    "source": "exact URL OR null",
+    "extracted_text": "exact sentence copied from source OR null"
+  }}
 }}
 
-IMPORTANT:
-- Output ONLY valid JSON
-- No markdown
-- No comments
+VERIFICATION CHECKLIST:
+Before returning output, verify:
+□ All values are directly quoted from sources
+□ All sources are valid URLs
+□ No data is mixed from other degrees/branches
+□ No calculations or approximations made
+□ JSON only
 """
 
         # 🔹 Retry logic

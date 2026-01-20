@@ -220,3 +220,11 @@
  2025-12-14 21:33:01 | INFO | branch_service | Fetching branches for degree_id=5
  2025-12-14 21:33:01 | INFO | branch_service | Found 3 branches for degree_id=5
  2025-12-14 21:33:01 | INFO | middleware | GET /api/branch/from-degree/5 → 200 (12.82 ms)
+ 2026-01-20 11:47:58 | INFO | app | Creating FastAPI application...
+ 2026-01-20 11:47:58 | INFO | app | FastAPI application created successfully.
+ 2026-01-20 11:47:58 | INFO | middleware | GET / → 404 (2.45 ms)
+ 2026-01-20 11:47:58 | INFO | middleware | GET /favicon.ico → 404 (0.00 ms)
+ 2026-01-20 11:48:04 | INFO | middleware | GET /docs → 200 (1.01 ms)
+ 2026-01-20 11:48:04 | INFO | middleware | GET /openapi.json → 200 (151.55 ms)
+ 2026-01-20 12:02:43 | INFO | app | Creating FastAPI application...
+ 2026-01-20 12:02:43 | INFO | app | FastAPI application created successfully.

@@ -4,162 +4,265 @@ from ai_career_advisor.core.config import settings
 import asyncio
 from functools import partial
 from google.api_core.exceptions import ResourceExhausted, GoogleAPIError
+from ai_career_advisor.core.logger import logger  # ✅ Your logger
 
 genai.configure(api_key=settings.GEMINI_API_KEY)
-
-# ✅ Model correct hai
 model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
+
 class CollegeStrictGeminiExtractor:
+    
     @staticmethod
-    async def extract(*, college_name: str, degree: str, branch: str) -> dict:
+    def _is_data_complete(extracted: dict) -> tuple[bool, list]:
+        """
+        Check if ALL critical fields have valid data
+        Returns: (is_complete, missing_fields)
+        """
+        critical_fields = ["fees", "avg_package", "highest_package", "entrance_exam", "cutoff"]
+        missing = []
         
-        prompt = f"""
-You are a STRICT data extraction engine that ONLY extracts explicitly stated information.
+        for field in critical_fields:
+            if field not in extracted:
+                missing.append(field)
+                continue
+            
+            value = extracted[field].get("value", "")
+            
+            # Check if value is null, empty, or "Not available"
+            if (not value or 
+                value.strip() == "" or 
+                value.strip().lower() == "not available" or 
+                value.strip().lower() == "null"):
+                missing.append(field)
+        
+        return (len(missing) == 0, missing)
 
-CORE PRINCIPLES:
-- Extract ONLY what is directly written in the source
-- DO NOT guess, infer, calculate, or approximate
-- DO NOT fabricate any data
-- If information is not found, return "Not available"
+    @staticmethod
+    async def extract(
+        *,
+        college_name: str,
+        degree: str,
+        branch: str,
+    ) -> dict:
+        """
+        Extract college details with retry logic
+        """
+        
+        MAX_RETRIES = 3
+        base_delay = 5
+        
+        for attempt in range(1, MAX_RETRIES + 1):
+            
+            # =============================
+            # LOG: ATTEMPT START
+            # =============================
+            if attempt == 1:
+                logger.info(f"📊 [Attempt {attempt}/{MAX_RETRIES}] Fetching details for {college_name}")
+            else:
+                logger.warning(f"🔄 [Attempt {attempt}/{MAX_RETRIES}] Retrying due to incomplete data for {college_name}")
+            
+            # =============================
+            # PROMPT (Progressive Relaxation)
+            # =============================
+            if attempt == 1:
+                prompt = f"""
+You are a STRICT data extraction engine.
 
-TARGET EXTRACTION:
-College: {college_name}
-Degree: {degree}
-Branch: {branch}
+DO NOT GUESS. DO NOT INFER. ONLY extract EXPLICIT information.
 
-NOTE: Extract data ONLY for the degree and branch specified above. Do not use data from other degrees or branches.
+COLLEGE: {college_name}
+DEGREE: {degree}
+BRANCH: {branch}
 
-SOURCE PRIORITY (use in this order):
-1. Official .ac.in / .edu.in domains or their PDFs
+SEARCH PRIORITY:
+1. Official {college_name} website (.ac.in / .edu.in)
 2. Shiksha.com
 3. Careers360.com
 4. CollegeDunia.com
-* no extra source other than this 
 
-DATA FIELDS TO EXTRACT:
-1. Annual tuition fees (exclude hostel/mess fees)
-2. Average placement package (branch-specific preferred)
-3. Highest placement package (branch-specific preferred)
+EXTRACT FOR {degree} in {branch}:
+
+MANDATORY FIELDS (ALL REQUIRED):
+1. Annual tuition fees (NOT hostel)
+2. Average placement package
+3. Highest placement package
 4. Entrance exam name
-5. Cutoff (rank/percentile with year and category)
+5. Cutoff (rank/percentile with year)
 
-EXTRACTION RULES:
-✓ Use most recent data (2024-25 or 2025-26 preferred)
-✓ If branch-specific placement data unavailable, use overall degree data and mention note: "Overall degree data used". if doing then only if found branch related then avoid note*. 
-✓ Copy exact sentences from source as extracted_text
-✓ Include exact source URL for each field
+RULES:
+❌ NO other degree/branch data
+❌ Prefer 2024-25 or 2025-26 data
+❌ If ANY field unavailable → return "Not available"
 
-✗ DO NOT mix data from different degrees or branches
-✗ DO NOT use outdated data if recent data exists
-✗ DO NOT perform calculations or estimations
-✗ DO NOT add fabricated years or values
+RETURN VALID JSON:
 
-OUTPUT FORMAT:
-i want datain this form only {{
-  "college_name": "{college_name}",
-  "degree": "{degree}",
-  "branch": "{branch}",
-
-  "fees": {{
-    "value": "₹X per year OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }},
-
-  "avg_package": {{
-    "value": "X LPA OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }},
-
-  "highest_package": {{
-    "value": "X LPA OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }},
-
-  "entrance_exam": {{
-    "value": "Exam name OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }},
-
-  "cutoff": {{
-    "value": "Rank/percentile (year, category) OR Not available",
-    "source": "exact URL OR null",
-    "extracted_text": "exact sentence copied from source OR null"
-  }}
+{{
+  "college_name": "{college_name}",
+  "degree": "{degree}",
+  "branch": "{branch}",
+  
+  "fees": {{
+    "value": "₹X per year OR Not available",
+    "source": "URL OR null",
+    "extracted_text": "sentence OR null"
+  }},
+  
+  "avg_package": {{
+    "value": "X LPA OR Not available",
+    "source": "URL OR null",
+    "extracted_text": "sentence OR null"
+  }},
+  
+  "highest_package": {{
+    "value": "X LPA OR Not available",
+    "source": "URL OR null",
+    "extracted_text": "sentence OR null"
+  }},
+  
+  "entrance_exam": {{
+    "value": "Exam name OR Not available",
+    "source": "URL OR null",
+    "extracted_text": "sentence OR null"
+  }},
+  
+  "cutoff": {{
+    "value": "Rank (year, category) OR Not available",
+    "source": "URL OR null",
+    "extracted_text": "sentence OR null"
+  }}
 }}
-
-VERIFICATION CHECKLIST:
-Before returning output, verify:
-□ All values are directly quoted from sources
-□ All sources are valid URLs
-□ No data is mixed from other degrees/branches
-□ No calculations or approximations made
-□ JSON only
 """
+            
+            elif attempt == 2:
+                prompt = f"""
+RETRY ATTEMPT: Previous data was incomplete.
 
-        # 🔹 Retry logic
-        max_retries = 3
-        base_delay = 5  # Extraction takes longer, so more gap
+COLLEGE: {college_name}
+DEGREE: {degree}
+BRANCH: {branch}
 
-        for attempt in range(max_retries):
+RELAXED RULES:
+✅ If branch data unavailable → USE degree-level data
+✅ If specific category unavailable → USE general category
+✅ Accept 2023-24 data if newer unavailable
+
+SEARCH HARDER:
+- Check placement reports
+- Check admission brochures
+- Check official PDFs
+
+RETURN ALL 5 FIELDS with valid data.
+Same JSON format.
+"""
+            
+            else:  # attempt == 3
+                logger.warning(f"🔄 [Attempt {attempt}/{MAX_RETRIES}] Final attempt for {college_name}")
+                prompt = f"""
+FINAL ATTEMPT: Return BEST available data.
+
+{college_name} - {degree} - {branch}
+
+MAXIMUM FLEXIBILITY:
+✅ Overall college data acceptable
+✅ Approximate/range values acceptable
+✅ Older data (2022-23) acceptable
+✅ Any reliable source
+
+TRY YOUR BEST to fill ALL 5 fields.
+Same JSON format.
+"""
+            
+            # =============================
+            # API CALL WITH TIMEOUT
+            # =============================
             try:
-                # ✅ Delay between requests (Free tier: 15 RPM = 4s gap minimum)
-                await asyncio.sleep(5)  # Safe gap for rate limits
+                # Rate limit delay
+                await asyncio.sleep(base_delay)
                 
-                if attempt > 0:
-                    delay = base_delay * (2 ** attempt)
-                    print(f"🟡 Retry {attempt + 1} for {college_name} extraction after {delay}s")
-                    await asyncio.sleep(delay)
-                
-                # ✅ Async executor with longer timeout
+                # Call Gemini
                 loop = asyncio.get_event_loop()
                 response = await asyncio.wait_for(
                     loop.run_in_executor(
                         None,
                         partial(model.generate_content, prompt)
                     ),
-                    timeout=120.0  # 2 minute timeout (extraction takes time)
+                    timeout=120.0
                 )
                 
                 text = response.text.strip()
-
-                # Remove markdown fences if present
+                
+                # Clean markdown
                 if text.startswith("```"):
-                    text = text.replace("```json", "").replace("```", "")
-
-                # Safe JSON parsing
+                    text = text.replace("```json", "").replace("```", "").strip()
+                
+                # Parse JSON
                 try:
-                    return json.loads(text)
+                    extracted = json.loads(text)
                 except Exception as e:
-                    print(f"🔴 JSON parse error for {college_name}: {str(e)}")
-                    return {
-                        "error": "Invalid JSON returned by Gemini",
-                        "raw_response": text
-                    }
-
+                    logger.error(f"   🔴 JSON parse error: {str(e)[:100]}")
+                    if attempt < MAX_RETRIES:
+                        await asyncio.sleep(base_delay * attempt)
+                        continue
+                    else:
+                        logger.error(f"   ❌ Data not found after {MAX_RETRIES} attempts (JSON parse failed)")
+                        return {"error": "invalid_json_after_retries"}
+                
+                # =============================
+                # CHECK COMPLETENESS
+                # =============================
+                is_complete, missing_fields = CollegeStrictGeminiExtractor._is_data_complete(extracted)
+                
+                if is_complete:
+                    logger.success(f"   ✅ SUCCESS: All fields extracted for {college_name}")
+                    return extracted
+                else:
+                    # Log missing fields
+                    logger.warning(f"   ⚠️ INCOMPLETE: Missing fields → {missing_fields}")
+                    
+                    if attempt < MAX_RETRIES:
+                        retry_delay = base_delay * (attempt + 1)
+                        logger.info(f"   ⏳ Waiting {retry_delay}s before retry...")
+                        await asyncio.sleep(retry_delay)
+                        continue
+                    else:
+                        # Max retries exhausted
+                        total_fields = 5
+                        found_fields = total_fields - len(missing_fields)
+                        logger.warning(f"   ⚠️ INCOMPLETE: Saving {found_fields}/{total_fields} fields (acceptable threshold met)")
+                        logger.warning(f"   ❌ Missing fields: {missing_fields}")
+                        logger.warning(f"   ❌ Incomplete data will NOT be saved to cache")
+                        return {
+                            "error": "incomplete_data_after_retries",
+                            "missing_fields": missing_fields,
+                            "found_fields": found_fields,
+                            "total_fields": total_fields
+                        }
+            
             except asyncio.TimeoutError:
-                print(f"⏱️ Timeout extracting {college_name} (attempt {attempt + 1})")
-                if attempt == max_retries - 1:
+                logger.error(f"   ⏱️ Timeout error (attempt {attempt})")
+                if attempt < MAX_RETRIES:
+                    continue
+                else:
+                    logger.error(f"   ❌ Data not found: Timeout after {MAX_RETRIES} attempts")
                     return {"error": "timeout_exceeded"}
-                continue
-
+            
             except ResourceExhausted:
-                print(f"🟡 Rate limit during extraction for {college_name}")
-                await asyncio.sleep(60)  # Wait 1 minute
-                if attempt == max_retries - 1:
+                logger.warning(f"   🟡 Rate limit hit (attempt {attempt})")
+                await asyncio.sleep(60)
+                if attempt < MAX_RETRIES:
+                    continue
+                else:
+                    logger.error(f"   ❌ Data not found: Quota exhausted")
                     return {"error": "quota_exhausted"}
-                continue
             
             except GoogleAPIError as e:
-                print(f"🔴 API Error for {college_name}: {str(e)}")
+                logger.error(f"   🔴 API Error: {str(e)}")
                 return {"error": f"api_error: {str(e)}"}
             
             except Exception as e:
-                print(f"🔴 Unexpected error for {college_name}: {str(e)}")
+                logger.error(f"   🔴 Unexpected error: {str(e)}")
                 return {"error": f"unexpected: {str(e)}"}
-
+        
+        # Should not reach here, but safety fallback
+        logger.error(f"   ❌ Data not found: All retries exhausted for {college_name}")
         return {"error": "all_retries_failed"}

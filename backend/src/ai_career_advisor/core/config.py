@@ -10,8 +10,14 @@ class Settings(BaseSettings):
 
     REDIS_URL: Optional[str] = None
 
-    SENDGRID_API_KEY: Optional[str] = None
-    FROM_EMAIL: Optional[str] = "no-reply@ai-advisor.local"
+    # email
+    
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USERNAME: str
+    SMTP_PASSWORD: str
+    SMTP_FROM_EMAIL: str
+    SMTP_FROM_NAME: str
 
     GEMINI_API_KEY: Optional[str] = None
     PERPLEXITY_API_KEY: Optional[str] = None

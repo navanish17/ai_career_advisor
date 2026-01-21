@@ -11,7 +11,7 @@ from .branch import router as branch
 from .career_insight import router as career_insight
 from .colleges import router as college_router
 from .backward_planner import router as backward_planner_router
-
+from .admission_alerts import router as admission_alerts_router
 
 
 
@@ -30,4 +30,5 @@ __all__ = [
     "career_insight",
     "college_router",
     "backward_planner_router",
+    "admission_alerts_router",
 ]

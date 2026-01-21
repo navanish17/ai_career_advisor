@@ -11,6 +11,10 @@ from .college import College
 from .college_details import CollegeDetails
 from .backward_roadmap import BackwardRoadmap
 from .career_template import CareerTemplate
+from .entrance_exam import EntranceExam
+from .college_entrance_mapping import CollegeEntranceMapping
+from .exam_alert import ExamAlert
+
 
 
 

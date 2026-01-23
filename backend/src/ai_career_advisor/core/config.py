@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
-
 from typing import Optional
+from pathlib import Path
+import os
 
 class Settings(BaseSettings):
     ENV: str = "development"
@@ -10,8 +11,7 @@ class Settings(BaseSettings):
 
     REDIS_URL: Optional[str] = None
 
-    # email
-    
+    # Email
     SMTP_HOST: str
     SMTP_PORT: int
     SMTP_USERNAME: str
@@ -22,7 +22,6 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: Optional[str] = None
     PERPLEXITY_API_KEY: Optional[str] = None
 
-
     API_PREFIX: str = "/api"
     PROJECT_NAME: str = "AI Career Advisor"
 
@@ -30,7 +29,15 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
 
     class Config:
-        env_file = ".env"
+        # Calculate absolute path to .env file
+        # This file location: backend/src/ai_career_advisor/core/config.py
+        # .env location: backend/.env
+        # Need to go up 4 levels: core -> ai_career_advisor -> src -> backend
+        
+        _current_file = Path(__file__).resolve()
+        _backend_dir = _current_file.parent.parent.parent.parent
+        env_file = str(_backend_dir / ".env")
         env_file_encoding = "utf-8"
+        case_sensitive = False
 
 settings = Settings()

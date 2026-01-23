@@ -14,6 +14,8 @@ from .career_template import CareerTemplate
 from .entrance_exam import EntranceExam
 from .college_entrance_mapping import CollegeEntranceMapping
 from .exam_alert import ExamAlert
+from .chatconversation import ChatConversation
+
 
 
 

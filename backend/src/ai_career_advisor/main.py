@@ -5,9 +5,8 @@ from ai_career_advisor.services.alert_scheduler import start_scheduler
 
 app = create_app()
 
-#include routers
-
 app.include_router(auth, prefix="/api/auth")
+app.include_router(admin_router)
 app.include_router(agent, prefix="/api/agent")
 app.include_router(career, prefix="/api/career")
 app.include_router(profile, prefix="/api/profile")

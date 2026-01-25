@@ -13,6 +13,7 @@ from .colleges import router as college_router
 from .backward_planner import router as backward_planner_router
 from .admission_alerts import router as admission_alerts_router
 from .chatbot import router as chatbot_router
+from .admin import router as admin_router
 
 
 
@@ -33,4 +34,5 @@ __all__ = [
     "backward_planner_router",
     "admission_alerts_router",
     "chatbot_router",
+    "admin_router",
 ]

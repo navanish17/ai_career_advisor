@@ -64,7 +64,7 @@ class QuizService:
         if not scores:
             return QuizResultResponse(stream=None)
 
-        # Get top interest
+       
         top_interest = max(scores, key=scores.get)
 
         # Map interest → stream

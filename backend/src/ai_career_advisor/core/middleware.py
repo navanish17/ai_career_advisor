@@ -1,10 +1,25 @@
 import time
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from ai_career_advisor.core.logger import logger
 
 
 def add_middlewares(app: FastAPI):
+    
+    app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8080",      
+        "http://127.0.0.1:8080"  
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+ )
+    
 
     @app.middleware("http")
     async def log_requests(request: Request, call_next):
@@ -26,3 +41,5 @@ def add_middlewares(app: FastAPI):
             status_code=500,
             content={"detail": "Internal Server Error"}
         )
+    
+

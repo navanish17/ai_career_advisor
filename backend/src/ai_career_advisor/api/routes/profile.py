@@ -15,9 +15,9 @@ from ai_career_advisor.Schemas.profile import (
 from ai_career_advisor.core.security import get_current_user
 
 
-router = APIRouter(prefix="/profile", tags=["Profile"])
+router = APIRouter(tags=["Profile"])
 
-@router.get("", response_model = ProfileResponse)
+@router.get("/profile", response_model = ProfileResponse)
 async def get_my_profile(db:AsyncSession = Depends(get_db),
                          current_user  = Depends(get_current_user)):
     
@@ -27,7 +27,7 @@ async def get_my_profile(db:AsyncSession = Depends(get_db),
         raise HTTPException(status_code = 404, detail = "Profile not found")
     return profile
 
-@router.put("", response_model = ProfileResponse)
+@router.put("/profile", response_model = ProfileResponse)
 async def update_my_profile(
     data: ProfileUpdate,
     db:AsyncSession = Depends(get_db),
@@ -59,7 +59,7 @@ async def update_class_level(
     }
 
 
-@router.post("/stream")
+@router.post("/profile/stream")
 async def update_stream_for_12th_student(
     payload: StreamUpdateRequest,
     db: AsyncSession = Depends(get_db),
@@ -77,7 +77,7 @@ async def update_stream_for_12th_student(
     }
 
 
-@router.post("", response_model = ProfileResponse)
+@router.post("/profile", response_model = ProfileResponse)
 
 async def create_profile(
     data: ProfileCreate,

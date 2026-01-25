@@ -26,9 +26,6 @@ async def get_quiz_questions(
     return questions
 
 
-
-# POST: Submit quiz answers
-
 @router.post("/submit", response_model=QuizResultResponse)
 async def submit_quiz(
     payload: QuizSubmitRequest,
@@ -38,5 +35,5 @@ async def submit_quiz(
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    result = await QuizService.evaluate_quiz(db, payload)
+    result = await QuizService.evaluate_quiz(db, payload, user.id)  
     return result

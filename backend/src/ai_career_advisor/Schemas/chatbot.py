@@ -1,10 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
-from datetime import datetime
 
 
 class IntentCheckRequest(BaseModel):
-    """Request to check if query is career-related"""
     query: str = Field(
         ..., 
         min_length=1, 
@@ -13,17 +11,16 @@ class IntentCheckRequest(BaseModel):
         example="IIT Bombay CSE fees kya hai"
     )
 
+
 class IntentCheckResponse(BaseModel):
-    """Response with intent classification result"""
     query: str
     is_career: bool
     confidence: float
-    method: str 
+    method: str
     reason: str
 
 
 class ChatbotAskRequest(BaseModel):
-    """Request to ask chatbot a question"""
     query: str = Field(
         ..., 
         min_length=3, 
@@ -36,38 +33,36 @@ class ChatbotAskRequest(BaseModel):
         description="Session ID for conversation tracking"
     )
 
+
 class ChatbotAskResponse(BaseModel):
-    """Response from chatbot"""
     query: str
     response: str
-    sources: List[Dict[str, Any]] = []
+    sources: List[str] = []
     confidence: float
-    responsetype: str  
+    responsetype: str
     responsetime: Optional[float] = None
     sessionid: str
 
 
 class ChatHistoryResponse(BaseModel):
-    """Single conversation history item"""
     id: int
     sessionid: str
     userquery: str
     botresponse: str
-    sources: Optional[List[Dict[str, Any]]] = []
+    sources: Optional[List[str]] = []
     confidence: Optional[float] = None
     responsetype: str
     responsetime: Optional[float] = None
     createdat: str
 
+
 class ChatHistoryListResponse(BaseModel):
-    """List of conversation history"""
     sessionid: str
     conversations: List[ChatHistoryResponse]
     total: int
 
 
 class ChatFeedbackRequest(BaseModel):
-    """User feedback on chatbot response"""
     conversationid: int = Field(..., description="ID of the conversation")
     upvoted: bool = Field(..., description="True for thumbs up, False for thumbs down")
     feedbacktext: Optional[str] = Field(
@@ -76,8 +71,8 @@ class ChatFeedbackRequest(BaseModel):
         description="Optional feedback text"
     )
 
+
 class ChatFeedbackResponse(BaseModel):
-    """Feedback submission confirmation"""
     success: bool
     message: str
     conversationid: int

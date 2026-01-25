@@ -62,7 +62,7 @@ class ProfileService:
         class_level: str
     ) -> Profile:
 
-        if class_level not in ["10th", "12th"]:
+        if class_level not in ["class_10", "class_12"]:
             raise ValueError("Invalid class level")
 
         result = await db.execute(

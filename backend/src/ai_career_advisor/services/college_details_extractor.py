@@ -33,10 +33,13 @@ class CollegeStrictGeminiExtractor:
             # Check if value is null, empty, or "Not available"
             if (not value or 
                 not str(value).strip() or 
-                str(value).strip().lower() in ["not available", "null", "none", "n/a"]):
+                str(value).strip().lower() in ["null", "none", "n/a"]):
                 missing.append(field)
+            # Allow "Not available" as a valid value
+            # Don't mark "Not available" as missing
         
         return (len(missing) == 0, missing)
+
 
     @staticmethod
     async def extract(
@@ -53,19 +56,23 @@ class CollegeStrictGeminiExtractor:
         PERPLEXITY_API_KEY = settings.PERPLEXITY_API_KEY or ""
         PERPLEXITY_MODEL = "sonar-pro"
 
+
         if not PERPLEXITY_API_KEY:
             logger.error("❌ Perplexity API key missing")
             return {"error": "api_key_missing"}
+
 
         # =============================
         # SINGLE STRICT PROMPT
         # =============================
         prompt = f"""You are a precise college data extraction assistant with web search access.
 
+
 TARGET PROGRAM:
 College: {college_name}
 Degree: {degree}
 Branch: {branch}
+
 
 DATA REQUIRED (for {degree} in {branch} ONLY):
 1. Official college website URL
@@ -75,10 +82,12 @@ DATA REQUIRED (for {degree} in {branch} ONLY):
 5. Entrance exam name
 6. Cutoff (rank/percentile/score)
 
+
 SEARCH STRATEGY:
 Priority 1: Official {college_name} website (look for: admissions page, fee structure PDFs, placement reports)
 Priority 2: AICTE/NIRF official data
 Priority 3: Verified portals (Shiksha.com, Careers360.com, CollegeDunia.com)
+
 
 STRICT RULES:
 ✅ ONLY extract data for {degree} in {branch} - ignore other branches/degrees
@@ -88,6 +97,7 @@ STRICT RULES:
 ✅ For cutoffs: specify year, category (General/OBC/SC/ST), and exam type
 ✅ For fees: annual tuition only (exclude hostel/other charges)
 ✅ For college website: provide official .edu.in or .ac.in domain (NOT third-party portals)
+
 
 OUTPUT FORMAT (valid JSON only):
 {{
@@ -132,12 +142,15 @@ OUTPUT FORMAT (valid JSON only):
   }}
 }}
 
+
 IMPORTANT: Return ONLY the JSON object, no additional text.
 """
         logger.info(f"📊 Extracting details for {college_name} using Perplexity Sonar Pro")
 
+
         try:
             import httpx
+
 
             async with httpx.AsyncClient(timeout=60.0) as client:
                 response = await client.post(
@@ -165,32 +178,38 @@ IMPORTANT: Return ONLY the JSON object, no additional text.
                     logger.error(f"❌ Perplexity API error: {response.status_code} - {response.text}")
                     return {"error": f"perplexity_api_error_{response.status_code}"}
 
+
                 data = response.json()
                 text = data["choices"][0]["message"]["content"].strip()
                 
-                # Clean clean markdown
+                # Clean markdown
                 if text.startswith("```"):
                     text = text.replace("```json", "").replace("```", "").strip()
+
 
                 try:
                     extracted = json.loads(text)
                 except json.JSONDecodeError:
-                     logger.error(f"❌ JSON parse failed for {college_name}")
-                     return {"error": "invalid_json_after_retries", "partial_data": {}}
+                    logger.error(f"❌ JSON parse failed for {college_name}")
+                    return {"error": "invalid_json_after_retries", "partial_data": {}}
+
 
                 # Validate completeness
                 is_complete, missing = CollegeStrictGeminiExtractor._is_data_complete(extracted)
                 
+                # Always return data, even if incomplete
                 if not is_complete:
-                     logger.warning(f"⚠️ Missing fields: {missing}")
-                     return {
-                        "error": "incomplete_data_after_retries",
+                    logger.warning(f"⚠️ Missing fields: {missing}")
+                    return {
+                        "warning": "incomplete_data",
                         "missing_fields": missing, 
                         "partial_data": extracted
-                     }
+                    }
+
 
                 logger.success(f"✅ Success: Extracted all details for {college_name}")
                 return extracted
+
 
         except Exception as e:
             logger.error(f"❌ Extraction error: {e}")

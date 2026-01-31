@@ -1,13 +1,9 @@
 import json
-import google.generativeai as genai
-from ai_career_advisor.core.config import settings
 import asyncio
 from functools import partial
-from google.api_core.exceptions import ResourceExhausted, GoogleAPIError
-from ai_career_advisor.core.logger import logger  # ✅ Your logger
-
-genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.5-flash-lite")
+from ai_career_advisor.core.logger import logger
+from ai_career_advisor.core.config import settings
+from ai_career_advisor.core.model_manager import ModelManager
 
 
 class CollegeStrictGeminiExtractor:
@@ -26,13 +22,18 @@ class CollegeStrictGeminiExtractor:
                 missing.append(field)
                 continue
             
-            value = extracted[field].get("value", "")
+            field_data = extracted[field]
+            
+            # Handle both nested dict and flat string
+            if isinstance(field_data, dict):
+                value = field_data.get("value", "")
+            else:
+                value = str(field_data)
             
             # Check if value is null, empty, or "Not available"
             if (not value or 
-                value.strip() == "" or 
-                value.strip().lower() == "not available" or 
-                value.strip().lower() == "null"):
+                not str(value).strip() or 
+                str(value).strip().lower() in ["not available", "null", "none", "n/a"]):
                 missing.append(field)
         
         return (len(missing) == 0, missing)
@@ -48,221 +49,149 @@ class CollegeStrictGeminiExtractor:
         Extract college details with retry logic
         """
         
-        MAX_RETRIES = 3
-        base_delay = 5
-        
-        for attempt in range(1, MAX_RETRIES + 1):
-            
-            # =============================
-            # LOG: ATTEMPT START
-            # =============================
-            if attempt == 1:
-                logger.info(f"📊 [Attempt {attempt}/{MAX_RETRIES}] Fetching details for {college_name}")
-            else:
-                logger.warning(f"🔄 [Attempt {attempt}/{MAX_RETRIES}] Retrying due to incomplete data for {college_name}")
-            
-            # =============================
-            # PROMPT (Progressive Relaxation)
-            # =============================
-            if attempt == 1:
-                prompt = f"""
-You are a STRICT data extraction engine.
+        # Perplexity configuration
+        PERPLEXITY_API_KEY = settings.PERPLEXITY_API_KEY or ""
+        PERPLEXITY_MODEL = "sonar-pro"
 
-DO NOT GUESS. DO NOT INFER. ONLY extract EXPLICIT information.
+        if not PERPLEXITY_API_KEY:
+            logger.error("❌ Perplexity API key missing")
+            return {"error": "api_key_missing"}
 
-COLLEGE: {college_name}
-DEGREE: {degree}
-BRANCH: {branch}
+        # =============================
+        # SINGLE STRICT PROMPT
+        # =============================
+        prompt = f"""You are a precise college data extraction assistant with web search access.
 
-SEARCH PRIORITY:
-1. Official {college_name} website (.ac.in / .edu.in)
-2. Shiksha.com
-3. Careers360.com
-4. CollegeDunia.com
+TARGET PROGRAM:
+College: {college_name}
+Degree: {degree}
+Branch: {branch}
 
-EXTRACT FOR {degree} in {branch}:
+DATA REQUIRED (for {degree} in {branch} ONLY):
+1. Official college website URL
+2. Annual tuition fees (academic year, NOT hostel/mess)
+3. Average placement package
+4. Highest placement package  
+5. Entrance exam name
+6. Cutoff (rank/percentile/score)
 
-MANDATORY FIELDS (ALL REQUIRED):
-1. Annual tuition fees (NOT hostel)
-2. Average placement package
-3. Highest placement package
-4. Entrance exam name
-5. Cutoff (rank/percentile with year)
+SEARCH STRATEGY:
+Priority 1: Official {college_name} website (look for: admissions page, fee structure PDFs, placement reports)
+Priority 2: AICTE/NIRF official data
+Priority 3: Verified portals (Shiksha.com, Careers360.com, CollegeDunia.com)
 
-RULES:
-❌ NO other degree/branch data
-❌ Prefer 2024-25 or 2025-26 data
-❌ If ANY field unavailable → return "Not available"
+STRICT RULES:
+✅ ONLY extract data for {degree} in {branch} - ignore other branches/degrees
+✅ Prefer 2025-26 data, accept 2024-25 if unavailable
+✅ Include data source URL for each field
+✅ If data not found after thorough search → mark "Not available"
+✅ For cutoffs: specify year, category (General/OBC/SC/ST), and exam type
+✅ For fees: annual tuition only (exclude hostel/other charges)
+✅ For college website: provide official .edu.in or .ac.in domain (NOT third-party portals)
 
-RETURN VALID JSON:
-
+OUTPUT FORMAT (valid JSON only):
 {{
   "college_name": "{college_name}",
   "degree": "{degree}",
   "branch": "{branch}",
+  "data_year": "2025-26 or 2024-25 or year found",
+  
+  "college_website": {{
+    "value": "https://official-college-website.ac.in",
+    "note": "Official college domain"
+  }},
   
   "fees": {{
-    "value": "₹X per year OR Not available",
-    "source": "URL OR null",
-    "extracted_text": "sentence OR null"
+    "value": "₹X per year",
+    "source_url": "URL",
+    "note": "any clarification if needed"
   }},
   
   "avg_package": {{
-    "value": "X LPA OR Not available",
-    "source": "URL OR null",
-    "extracted_text": "sentence OR null"
+    "value": "X LPA",
+    "source_url": "URL",
+    "note": "clarification"
   }},
   
   "highest_package": {{
-    "value": "X LPA OR Not available",
-    "source": "URL OR null",
-    "extracted_text": "sentence OR null"
+    "value": "X LPA",
+    "source_url": "URL",
+    "note": "clarification"
   }},
   
   "entrance_exam": {{
-    "value": "Exam name OR Not available",
-    "source": "URL OR null",
-    "extracted_text": "sentence OR null"
+    "value": "Exam name",
+    "source_url": "URL",
+    "note": "clarification"
   }},
   
   "cutoff": {{
-    "value": "Rank (year, category) OR Not available",
-    "source": "URL OR null",
-    "extracted_text": "sentence OR null"
+    "value": "Rank/Percentile (year, category)",
+    "source_url": "URL",
+    "note": "clarification"
   }}
 }}
+
+IMPORTANT: Return ONLY the JSON object, no additional text.
 """
-            
-            elif attempt == 2:
-                prompt = f"""
-RETRY ATTEMPT: Previous data was incomplete.
+        logger.info(f"📊 Extracting details for {college_name} using Perplexity Sonar Pro")
 
-COLLEGE: {college_name}
-DEGREE: {degree}
-BRANCH: {branch}
+        try:
+            import httpx
 
-RELAXED RULES:
-✅ If branch data unavailable → USE degree-level data
-✅ If specific category unavailable → USE general category
-✅ Accept 2023-24 data if newer unavailable
-
-SEARCH HARDER:
-- Check placement reports
-- Check admission brochures
-- Check official PDFs
-
-RETURN ALL 5 FIELDS with valid data.
-Same JSON format.
-"""
-            
-            else:  # attempt == 3
-                logger.warning(f"🔄 [Attempt {attempt}/{MAX_RETRIES}] Final attempt for {college_name}")
-                prompt = f"""
-FINAL ATTEMPT: Return BEST available data.
-
-{college_name} - {degree} - {branch}
-
-MAXIMUM FLEXIBILITY:
-✅ Overall college data acceptable
-✅ Approximate/range values acceptable
-✅ Older data (2022-23) acceptable
-✅ Any reliable source
-
-TRY YOUR BEST to fill ALL 5 fields.
-Same JSON format.
-"""
-            
-            # =============================
-            # API CALL WITH TIMEOUT
-            # =============================
-            try:
-                # Rate limit delay
-                await asyncio.sleep(base_delay)
-                
-                # Call Gemini
-                loop = asyncio.get_event_loop()
-                response = await asyncio.wait_for(
-                    loop.run_in_executor(
-                        None,
-                        partial(model.generate_content, prompt)
-                    ),
-                    timeout=120.0
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    "https://api.perplexity.ai/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": PERPLEXITY_MODEL,
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": "You are a precise data extraction assistant. Return ONLY valid JSON."
+                            },
+                            {
+                                "role": "user",
+                                "content": prompt
+                            }
+                        ]
+                    }
                 )
                 
-                text = response.text.strip()
+                if response.status_code != 200:
+                    logger.error(f"❌ Perplexity API error: {response.status_code} - {response.text}")
+                    return {"error": f"perplexity_api_error_{response.status_code}"}
+
+                data = response.json()
+                text = data["choices"][0]["message"]["content"].strip()
                 
-                # Clean markdown
+                # Clean clean markdown
                 if text.startswith("```"):
                     text = text.replace("```json", "").replace("```", "").strip()
-                
-                # Parse JSON
+
                 try:
                     extracted = json.loads(text)
-                except Exception as e:
-                    logger.error(f"   🔴 JSON parse error: {str(e)[:100]}")
-                    if attempt < MAX_RETRIES:
-                        await asyncio.sleep(base_delay * attempt)
-                        continue
-                    else:
-                        logger.error(f"   ❌ Data not found after {MAX_RETRIES} attempts (JSON parse failed)")
-                        return {"error": "invalid_json_after_retries"}
+                except json.JSONDecodeError:
+                     logger.error(f"❌ JSON parse failed for {college_name}")
+                     return {"error": "invalid_json_after_retries", "partial_data": {}}
+
+                # Validate completeness
+                is_complete, missing = CollegeStrictGeminiExtractor._is_data_complete(extracted)
                 
-                # =============================
-                # CHECK COMPLETENESS
-                # =============================
-                is_complete, missing_fields = CollegeStrictGeminiExtractor._is_data_complete(extracted)
-                
-                if is_complete:
-                    logger.success(f"   ✅ SUCCESS: All fields extracted for {college_name}")
-                    return extracted
-                else:
-                    # Log missing fields
-                    logger.warning(f"   ⚠️ INCOMPLETE: Missing fields → {missing_fields}")
-                    
-                    if attempt < MAX_RETRIES:
-                        retry_delay = base_delay * (attempt + 1)
-                        logger.info(f"   ⏳ Waiting {retry_delay}s before retry...")
-                        await asyncio.sleep(retry_delay)
-                        continue
-                    else:
-                        # Max retries exhausted
-                        total_fields = 5
-                        found_fields = total_fields - len(missing_fields)
-                        logger.warning(f"   ⚠️ INCOMPLETE: Saving {found_fields}/{total_fields} fields (acceptable threshold met)")
-                        logger.warning(f"   ❌ Missing fields: {missing_fields}")
-                        logger.warning(f"   ❌ Incomplete data will NOT be saved to cache")
-                        return {
-                            "error": "incomplete_data_after_retries",
-                            "missing_fields": missing_fields,
-                            "found_fields": found_fields,
-                            "total_fields": total_fields
-                        }
-            
-            except asyncio.TimeoutError:
-                logger.error(f"   ⏱️ Timeout error (attempt {attempt})")
-                if attempt < MAX_RETRIES:
-                    continue
-                else:
-                    logger.error(f"   ❌ Data not found: Timeout after {MAX_RETRIES} attempts")
-                    return {"error": "timeout_exceeded"}
-            
-            except ResourceExhausted:
-                logger.warning(f"   🟡 Rate limit hit (attempt {attempt})")
-                await asyncio.sleep(60)
-                if attempt < MAX_RETRIES:
-                    continue
-                else:
-                    logger.error(f"   ❌ Data not found: Quota exhausted")
-                    return {"error": "quota_exhausted"}
-            
-            except GoogleAPIError as e:
-                logger.error(f"   🔴 API Error: {str(e)}")
-                return {"error": f"api_error: {str(e)}"}
-            
-            except Exception as e:
-                logger.error(f"   🔴 Unexpected error: {str(e)}")
-                return {"error": f"unexpected: {str(e)}"}
-        
-        # Should not reach here, but safety fallback
-        logger.error(f"   ❌ Data not found: All retries exhausted for {college_name}")
-        return {"error": "all_retries_failed"}
+                if not is_complete:
+                     logger.warning(f"⚠️ Missing fields: {missing}")
+                     return {
+                        "error": "incomplete_data_after_retries",
+                        "missing_fields": missing, 
+                        "partial_data": extracted
+                     }
+
+                logger.success(f"✅ Success: Extracted all details for {college_name}")
+                return extracted
+
+        except Exception as e:
+            logger.error(f"❌ Extraction error: {e}")
+            return {"error": str(e)}

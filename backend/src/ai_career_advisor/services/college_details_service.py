@@ -68,35 +68,41 @@ class CollegeDetailsService:
         # =============================
         logger.info(f"   💾 Saving complete data to cache...")
         
+        def safe_get(field_key, sub_key):
+            field_data = extracted.get(field_key)
+            if isinstance(field_data, dict):
+                return field_data.get(sub_key)
+            elif sub_key == "value":
+                return str(field_data) if field_data is not None else None
+            return None
+
         details = CollegeDetails(
             college_id=college_id,
             degree=degree,
             branch=branch,
 
-            fees_value=extracted.get("fees", {}).get("value"),
-            fees_source=extracted.get("fees", {}).get("source"),
-            fees_extracted_text=extracted.get("fees", {}).get("extracted_text"),
+            fees_value=safe_get("fees", "value"),
+            fees_source=safe_get("fees", "source"),
+            fees_extracted_text=safe_get("fees", "extracted_text"),
 
-            avg_package_value=extracted.get("avg_package", {}).get("value"),
-            avg_package_source=extracted.get("avg_package", {}).get("source"),
-            avg_package_extracted_text=extracted.get("avg_package", {}).get("extracted_text"),
+            avg_package_value=safe_get("avg_package", "value"),
+            avg_package_source=safe_get("avg_package", "source"),
+            avg_package_extracted_text=safe_get("avg_package", "extracted_text"),
 
-            highest_package_value=extracted.get("highest_package", {}).get("value"),
-            highest_package_source=extracted.get("highest_package", {}).get("source"),
-            highest_package_extracted_text=extracted.get("highest_package", {}).get("extracted_text"),
+            highest_package_value=safe_get("highest_package", "value"),
+            highest_package_source=safe_get("highest_package", "source"),
+            highest_package_extracted_text=safe_get("highest_package", "extracted_text"),
 
-            entrance_exam_value=extracted.get("entrance_exam", {}).get("value"),
-            entrance_exam_source=extracted.get("entrance_exam", {}).get("source"),
-            entrance_exam_extracted_text=extracted.get("entrance_exam", {}).get("extracted_text"),
+            entrance_exam_value=safe_get("entrance_exam", "value"),
+            entrance_exam_source=safe_get("entrance_exam", "source"),
+            entrance_exam_extracted_text=safe_get("entrance_exam", "extracted_text"),
 
-            cutoff_value=extracted.get("cutoff", {}).get("value"),
-            cutoff_source=extracted.get("cutoff", {}).get("source"),
-            cutoff_extracted_text=extracted.get("cutoff", {}).get("extracted_text"),
+            cutoff_value=safe_get("cutoff", "value"),
+            cutoff_source=safe_get("cutoff", "source"),
+            cutoff_extracted_text=safe_get("cutoff", "extracted_text"),
         )
 
         db.add(details)
-        await db.commit()
-        await db.refresh(details)
         
         logger.success(f"   ✅ Complete data cached successfully for college_id={college_id}")
         return details

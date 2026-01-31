@@ -20,7 +20,7 @@ import type { BackwardRoadmapData } from '@/types/roadmap';
 
 interface RoadmapTimelineProps {
   roadmapData: BackwardRoadmapData;
-  source: string;
+  source?: string;
   onSave?: () => void;
   isSaving?: boolean;
   showSaveButton?: boolean;
@@ -28,7 +28,7 @@ interface RoadmapTimelineProps {
 
 const RoadmapTimeline = ({ 
   roadmapData, 
-  source,
+  source = 'Database',
   onSave, 
   isSaving, 
   showSaveButton = true 
@@ -404,9 +404,9 @@ const RoadmapTimeline = ({
                       <CollapsibleContent className="mt-3 space-y-3">
                         <div>
                           <p className="text-sm font-medium text-muted-foreground">Focus</p>
-                          <p className="text-sm">{data.focus}</p>
+                          <p className="text-sm">{data?.focus || 'No focus information available'}</p>
                         </div>
-                        {data.exam_focus && (
+                        {data?.exam_focus && (
                           <div>
                             <p className="text-sm font-medium text-muted-foreground">Exams</p>
                             <p className="text-sm">{data.exam_focus}</p>
@@ -415,12 +415,16 @@ const RoadmapTimeline = ({
                         <div>
                           <p className="text-sm font-medium text-muted-foreground mb-2">Action Items</p>
                           <ul className="space-y-1">
-                            {data.action_items.map((item, i) => (
-                              <li key={i} className="flex items-start gap-2 text-sm">
-                                <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
+                            {data?.action_items && Array.isArray(data.action_items) ? (
+                              data.action_items.map((item, i) => (
+                                <li key={i} className="flex items-start gap-2 text-sm">
+                                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                                  <span>{item}</span>
+                                </li>
+                              ))
+                            ) : (
+                              <li className="text-sm text-muted-foreground">No action items available</li>
+                            )}
                           </ul>
                         </div>
                       </CollapsibleContent>

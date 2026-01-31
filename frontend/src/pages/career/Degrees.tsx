@@ -24,9 +24,23 @@ const Degrees = () => {
     const fetchDegrees = async () => {
       setIsLoading(true);
       try {
-        const response = await api.get(`/api/degree/api/degree/from-stream/${activeStream}`);
-        setDegrees(response.data);
+        // ✅ FIXED: Removed duplicate path
+        const response = await api.get(`/api/degree/from-stream/${activeStream}`);
+        
+        // ✅ ADDED: Safe check
+        if (response.data && Array.isArray(response.data)) {
+          setDegrees(response.data);
+        } else {
+          setDegrees([]);
+          toast({
+            title: 'No degrees found',
+            description: `No degrees available for ${activeStream} stream`,
+            variant: 'default',
+          });
+        }
       } catch (error: any) {
+        console.error('Error fetching degrees:', error);
+        setDegrees([]); // ✅ ADDED: Reset to empty array on error
         toast({
           title: 'Error',
           description: error.response?.data?.detail || 'Failed to load degrees',

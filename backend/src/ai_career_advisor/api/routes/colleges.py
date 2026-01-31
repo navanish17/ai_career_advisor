@@ -28,13 +28,21 @@ class CollegeDetailRequest(BaseModel):
     branch: str
 
 
-async def check_programs_in_batches(colleges, degree: str, branch: str):
+class CheckAvailabilityRequest(BaseModel):
+    college_id: int
+    degree: str
+    branch: str
+
+
+async def check_programs_in_batches(colleges, degree: str, branch: str, db: AsyncSession):
     """
-    Check programs in controlled batches with delays
-    Free tier safe: 15 RPM = ~4s per call
+    Check programs in controlled batches with caching
+    Uses database cache to avoid repeated LLM calls
     """
     async def check_one(college):
-        result = await CollegeProgramCheckService.check(
+        result = await CollegeProgramCheckService.check_with_cache(
+            db=db,
+            college_id=college.id,
             college_name=college.name,
             degree=degree,
             branch=branch
@@ -63,13 +71,51 @@ async def check_programs_in_batches(colleges, degree: str, branch: str):
     return all_results
 
 
+@router.post("/check-availability")
+async def check_availability(
+    payload: CheckAvailabilityRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Check if a specific college offers the program.
+    Used for background parallel checking.
+    """
+    # Get college name first (needed for the check)
+    from ai_career_advisor.models.college import College
+    from sqlalchemy import select
+    
+    result = await db.execute(
+        select(College).where(College.id == payload.college_id)
+    )
+    college = result.scalars().first()
+    
+    if not college:
+        raise HTTPException(status_code=404, detail="College not found")
+
+    offers = await CollegeProgramCheckService.check_with_cache(
+        db=db,
+        college_id=college.id,
+        college_name=college.name,
+        degree=payload.degree,
+        branch=payload.branch
+    )
+    
+    return {
+        "id": college.id,
+        "offers_program": offers,
+        "status": "checked"
+    }
+
+
 @router.post("/finder")
 async def find_colleges(
     payload: CollegeFinderRequest,
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Main search: Returns all offering colleges + FULL details for TOP 1 only
+    Main search: FAST RETURN.
+    Returns all colleges in state immediately.
+    Frontend does background availability checks.
     """
     
     # =============================
@@ -83,150 +129,37 @@ async def find_colleges(
     if not colleges:
         return {
             "message": f"No colleges found in {payload.state}",
-            "offering_colleges": [],
-            "not_offering_colleges": []
+            "colleges": []
         }
 
     print(f"📚 Found {len(colleges)} colleges in {payload.state}")
-
-    # =============================
-    # STEP 2: CHECK PROGRAM AVAILABILITY (ALL)
-    # =============================
-    print(f"🔍 Checking which colleges offer {payload.degree} in {payload.branch}")
     
-    program_results = await check_programs_in_batches(
-        colleges,
-        payload.degree,
-        payload.branch
-    )
-
-    # Separate offering vs not offering
-    offering = [(college, True) for college, offers in program_results if offers]
-    not_offering = [(college, False) for college, offers in program_results if not offers]
-
-    print(f"✅ {len(offering)} colleges offer the program")
-    print(f"❌ {len(not_offering)} colleges do NOT offer the program")
-
-    # =============================
-    # STEP 3: EXTRACT DETAILS FOR TOP 1 ONLY
-    # =============================
-    offering_results = []
-
-    if offering:
-        top_college = offering[0][0]  # Best NIRF rank (already sorted)
+    # Return immediately with pending status
+    # Frontend will check availability
+    
+    results = []
+    # Track added college names to prevent duplicates
+    added_names = set()
+    
+    for college in colleges:
+        # Normalize name for de-duplication (case-insensitive, strip whitespace)
+        norm_name = college.name.strip().lower()
         
-        # Check cache first
-        cached = await CollegeDetailsService.get_cached(
-            db,
-            college_id=top_college.id,
-            degree=payload.degree,
-            branch=payload.branch
-        )
-
-        if cached:
-            print(f"💾 Top college details found in cache: {top_college.name}")
-            offering_results.append({
-                "id": top_college.id,
-                "name": top_college.name,
-                "nirf_rank": top_college.nirf_rank,
-                "offers_program": True,
-                "fees": cached.fees_value,
-                "fees_source": cached.fees_source,
-                "avg_package": cached.avg_package_value,
-                "avg_package_source": cached.avg_package_source,
-                "highest_package": cached.highest_package_value,
-                "highest_package_source": cached.highest_package_source,
-                "entrance_exam": cached.entrance_exam_value,
-                "entrance_exam_source": cached.entrance_exam_source,
-                "cutoff": cached.cutoff_value,
-                "cutoff_source": cached.cutoff_source,
-                "status": "full_details_available",
-                "source": "cache"
-            })
-        else:
-            print(f"📊 Extracting details for TOP college: {top_college.name}")
-            
-            extracted = await CollegeStrictGeminiExtractor.extract(
-                college_name=top_college.name,
-                degree=payload.degree,
-                branch=payload.branch
-            )
-
-            if "error" in extracted:
-                print(f"⚠️ Error extracting details: {extracted.get('error')}")
-                offering_results.append({
-                    "id": top_college.id,
-                    "name": top_college.name,
-                    "nirf_rank": top_college.nirf_rank,
-                    "offers_program": True,
-                    "status": "details_extraction_failed",
-                    "error": extracted.get("error")
-                })
-            else:
-                # Save to cache
-                saved = await CollegeDetailsService.save_from_extraction(
-                    db,
-                    college_id=top_college.id,
-                    degree=payload.degree,
-                    branch=payload.branch,
-                    extracted=extracted
-                )
-
-                offering_results.append({
-                    "id": top_college.id,
-                    "name": top_college.name,
-                    "nirf_rank": top_college.nirf_rank,
-                    "offers_program": True,
-                    "fees": saved.fees_value,
-                    "fees_source": saved.fees_source,
-                    "avg_package": saved.avg_package_value,
-                    "avg_package_source": saved.avg_package_source,
-                    "highest_package": saved.highest_package_value,
-                    "highest_package_source": saved.highest_package_source,
-                    "entrance_exam": saved.entrance_exam_value,
-                    "entrance_exam_source": saved.entrance_exam_source,
-                    "cutoff": saved.cutoff_value,
-                    "cutoff_source": saved.cutoff_source,
-                    "status": "full_details_available",
-                    "source": "gemini_fresh"
-                })
-
-                print(f"✅ Details saved to cache for {top_college.name}")
-
-        # =============================
-        # REMAINING COLLEGES (No details yet)
-        # =============================
-        for college, _ in offering[1:]:  # Skip first (already processed)
-            offering_results.append({
+        if norm_name not in added_names:
+            results.append({
                 "id": college.id,
                 "name": college.name,
                 "nirf_rank": college.nirf_rank,
-                "offers_program": True,
-                "status": "details_available_on_request",
-                "message": "Click 'Get Details' to fetch information"
+                "location": f"{college.city}, {college.state}",
+                "status": "pending_check",
+                "offers_program": None # Unknown yet
             })
-
-    # =============================
-    # NOT OFFERING COLLEGES
-    # =============================
-    not_offering_results = [
-        {
-            "id": college.id,
-            "name": college.name,
-            "nirf_rank": college.nirf_rank,
-            "offers_program": False,
-            "reason": f"Does not offer {payload.degree} in {payload.branch}"
-        }
-        for college, _ in not_offering
-    ]
+            added_names.add(norm_name)
 
     return {
-        "total_colleges_checked": len(colleges),
-        "offering_count": len(offering),
-        "not_offering_count": len(not_offering),
-        "offering_colleges": offering_results,
-        "not_offering_colleges": not_offering_results[:10],  # Limit to 10
-        "message": f"✅ Found {len(offering)} colleges offering {payload.degree} in {payload.branch}. Full details provided for top college."
+        "message": f"Found {len(results)} colleges. Checking availability...",
+        "total_colleges": len(results),
+        "colleges": results
     }
 
 
@@ -241,7 +174,21 @@ async def get_college_details(
     """
     
     # =============================
-    # STEP 1: CHECK CACHE
+    # STEP 1: GET COLLEGE INFO (needed for name even if cached)
+    # =============================
+    from ai_career_advisor.models.college import College
+    from sqlalchemy import select
+    
+    result = await db.execute(
+        select(College).where(College.id == payload.college_id)
+    )
+    college = result.scalars().first()
+
+    if not college:
+        raise HTTPException(status_code=404, detail="College not found")
+
+    # =============================
+    # STEP 2: CHECK CACHE
     # =============================
     cached = await CollegeDetailsService.get_cached(
         db,
@@ -251,9 +198,12 @@ async def get_college_details(
     )
 
     if cached:
-        print(f"💾 Details found in cache for college_id={payload.college_id}")
+        print(f"💾 Details found in cache for college: {college.name}")
         return {
-            "college_id": payload.college_id,
+            "id": payload.college_id,
+            "name": college.name,
+            "nirf_rank": college.nirf_rank,
+            "location": f"{college.city}, {college.state}",
             "degree": payload.degree,
             "branch": payload.branch,
             "fees": cached.fees_value,
@@ -275,20 +225,6 @@ async def get_college_details(
         }
 
     # =============================
-    # STEP 2: GET COLLEGE INFO
-    # =============================
-    from ai_career_advisor.models.college import College
-    from sqlalchemy import select
-    
-    result = await db.execute(
-        select(College).where(College.id == payload.college_id)
-    )
-    college = result.scalars().first()
-
-    if not college:
-        raise HTTPException(status_code=404, detail="College not found")
-
-    # =============================
     # STEP 3: EXTRACT FROM GEMINI
     # =============================
     print(f"📊 Extracting details for {college.name} (on-demand request)")
@@ -300,10 +236,46 @@ async def get_college_details(
     )
 
     if "error" in extracted:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to extract details: {extracted.get('error')}"
-        )
+        print(f"⚠️ Extraction failed/incomplete for {college.name}: {extracted.get('error')}")
+        
+        # Determine message based on error type
+        error_type = extracted.get("error")
+        user_message = "Partial details found."
+        
+        if error_type == "incomplete_data_after_retries":
+             user_message = "Partial details found. Some fields missing."
+        elif error_type == "invalid_json_after_retries":
+             user_message = "Could not parse college data. Please try again."
+        elif error_type == "timeout_exceeded":
+             user_message = "Request timed out. Please try again."
+        else:
+             user_message = "Details temporarily unavailable."
+
+        # Attempt to retrieve any partial data if available
+        partial_data = extracted.get("partial_data", {})
+        
+        def safe_get_val(field):
+            val = partial_data.get(field)
+            if isinstance(val, dict): return val.get("value")
+            return str(val) if val else "Not available"
+
+        return {
+            "id": payload.college_id,
+            "name": college.name,
+            "nirf_rank": college.nirf_rank,
+            "location": f"{college.city}, {college.state}",
+            "degree": payload.degree,
+            "branch": payload.branch,
+            # Fill fields with partial data or "Not available"
+            "fees": safe_get_val("fees"),
+            "fees_source": None, 
+            "avg_package": safe_get_val("avg_package"),
+            "highest_package": safe_get_val("highest_package"),
+            "entrance_exam": safe_get_val("entrance_exam"),
+            "cutoff": safe_get_val("cutoff"),
+            "source": "gemini_error_fallback",
+            "message": user_message
+        }
 
     # =============================
     # STEP 4: SAVE TO CACHE
@@ -316,11 +288,18 @@ async def get_college_details(
         extracted=extracted
     )
 
+    if not saved:
+         # This should technically be handled by the error block above if it was an error
+         # But if save returned None for some other reason, we handle it here
+         raise HTTPException(status_code=500, detail="Failed to save data")
+
     print(f"✅ Details saved to cache for {college.name}")
 
-    return {
-        "college_id": payload.college_id,
-        "college_name": college.name,
+    response_data = {
+        "id": payload.college_id,
+        "name": college.name,
+        "nirf_rank": college.nirf_rank,
+        "location": f"{college.city}, {college.state}",
         "degree": payload.degree,
         "branch": payload.branch,
         "fees": saved.fees_value,
@@ -340,3 +319,8 @@ async def get_college_details(
         "cutoff_extracted_text": saved.cutoff_extracted_text,
         "source": "gemini_fresh"
     }
+    
+    # Commit database changes
+    await db.commit()
+    
+    return response_data

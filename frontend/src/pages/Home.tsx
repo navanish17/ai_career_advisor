@@ -3,25 +3,39 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, User, BookOpen, Loader2, ClipboardList, Map, MessageCircle, MapPin, Bell } from 'lucide-react';
+import { LogOut, User, BookOpen, Loader2, ClipboardList, GraduationCap, Map, Target, ArrowRight, FolderOpen, Building2 } from 'lucide-react';
 import type { Profile } from '@/types/auth';
+import type { SavedRoadmap } from '@/types/roadmap';
+import ChatBot from '@/components/chat/chatbot';
+import { ThemeToggle } from '@/components/theme-toggle';
+const popularCareers = ['Software Engineer', 'Doctor', 'Data Scientist', 'CA', 'IAS'];
 
 const Home = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [savedRoadmaps, setSavedRoadmaps] = useState<SavedRoadmap[]>([]);
+  const [totalRoadmapsCount, setTotalRoadmapsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [careerGoal, setCareerGoal] = useState('');
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const response = await api.get<Profile>('/api/profile/profile');
-      if (response.data) {
-        setProfile(response.data);
+    const fetchData = async () => {
+      const [profileRes, roadmapsRes] = await Promise.all([
+        api.get<Profile>('/api/profile/profile'),
+        api.get<SavedRoadmap[]>('/api/roadmap/user')
+      ]);
+      if (profileRes.data) setProfile(profileRes.data);
+      if (roadmapsRes.data) {
+        setTotalRoadmapsCount(roadmapsRes.data.length);
+        setSavedRoadmaps(roadmapsRes.data.slice(0, 2));
       }
       setIsLoading(false);
     };
-    fetchProfile();
+    fetchData();
   }, []);
 
   const handleLogout = () => {
@@ -34,17 +48,19 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
       <header className="border-b">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <BookOpen className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">AI Career Advisor</span>
+            <span className="text-xl font-bold">AI Career Pilot</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
               Welcome, {user?.name}
             </span>
+            <ThemeToggle />
             <Button variant="ghost" size="icon" onClick={handleLogout}>
               <LogOut className="h-5 w-5" />
             </Button>
@@ -52,6 +68,7 @@ const Home = () => {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="container mx-auto p-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -60,6 +77,7 @@ const Home = () => {
           </p>
         </div>
 
+        {/* User Profile Card */}
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -98,8 +116,9 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card 
+        {/* Career Explorer Cards */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card
             className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50"
             onClick={() => navigate('/quiz')}
           >
@@ -112,56 +131,155 @@ const Home = () => {
             </CardHeader>
           </Card>
 
-          <Card className="border-dashed opacity-60">
+          <Card
+            className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50"
+            onClick={() => navigate('/degrees')}
+          >
             <CardHeader className="pb-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted mb-2">
-                <Map className="h-6 w-6 text-muted-foreground" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-2">
+                <GraduationCap className="h-6 w-6 text-primary" />
               </div>
-              <CardTitle className="text-lg text-muted-foreground">Roadmap Generator</CardTitle>
-              <CardDescription>Coming in Phase 4</CardDescription>
+              <CardTitle className="text-lg">Explore Degrees</CardTitle>
+              <CardDescription>Browse degrees, branches and career paths</CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className="border-dashed opacity-60">
+          <Card
+            className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50"
+            onClick={() => navigate('/roadmap')}
+          >
             <CardHeader className="pb-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted mb-2">
-                <MapPin className="h-6 w-6 text-muted-foreground" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-2">
+                <Map className="h-6 w-6 text-primary" />
               </div>
-              <CardTitle className="text-lg text-muted-foreground">College Finder</CardTitle>
-              <CardDescription>Coming in Phase 3</CardDescription>
+              <CardTitle className="text-lg">Roadmap Generator</CardTitle>
+              <CardDescription>Plan your path to success</CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className="border-dashed opacity-60">
+          <Card
+            className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50"
+            onClick={() => navigate('/college-finder')}
+          >
             <CardHeader className="pb-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted mb-2">
-                <Bell className="h-6 w-6 text-muted-foreground" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-2">
+                <Building2 className="h-6 w-6 text-primary" />
               </div>
-              <CardTitle className="text-lg text-muted-foreground">Admission Alerts</CardTitle>
-              <CardDescription>Coming in Phase 3</CardDescription>
+              <CardTitle className="text-lg">College Finder</CardTitle>
+              <CardDescription>Search colleges & set admission alerts</CardDescription>
             </CardHeader>
           </Card>
+
+          <Card
+            className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative"
+            onClick={() => navigate('/roadmap/my-roadmaps')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-2">
+                <FolderOpen className="h-6 w-6 text-primary" />
+              </div>
+              <CardTitle className="text-lg">My Roadmaps</CardTitle>
+              <CardDescription>View all your saved career roadmaps</CardDescription>
+              {totalRoadmapsCount > 0 && (
+                <Badge className="absolute top-3 right-3" variant="secondary">
+                  {totalRoadmapsCount}
+                </Badge>
+              )}
+            </CardHeader>
+          </Card>
+
         </div>
+
+        {/* Roadmap Quick Access */}
+        <Card className="mt-6">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Target className="h-5 w-5 text-primary" />
+              Quick Roadmap
+            </CardTitle>
+            <CardDescription>Enter your dream career to generate a personalized path</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3 mb-4">
+              <Input
+                placeholder="e.g., Data Scientist at Google"
+                value={careerGoal}
+                onChange={(e) => setCareerGoal(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && careerGoal.trim()) {
+                    navigate('/roadmap/backward', { state: { careerGoal } });
+                  }
+                }}
+                className="flex-1"
+              />
+              <Button
+                onClick={() => {
+                  if (careerGoal.trim()) {
+                    navigate('/roadmap/backward', { state: { careerGoal } });
+                  } else {
+                    navigate('/roadmap');
+                  }
+                }}
+              >
+                Generate
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {popularCareers.map((career) => (
+                <Badge
+                  key={career}
+                  variant="outline"
+                  className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                  onClick={() => navigate('/roadmap/backward', { state: { careerGoal: `I want to become a ${career}` } })}
+                >
+                  {career}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Saved Roadmaps Preview */}
+        {savedRoadmaps.length > 0 && (
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <FolderOpen className="h-5 w-5" />
+                Your Roadmaps
+              </h3>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/roadmap/my-roadmaps')}>
+                View All
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {savedRoadmaps.map((roadmap) => (
+                <Card
+                  key={roadmap.id}
+                  className="cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => navigate(`/roadmap/view/${roadmap.id}`)}
+                >
+                  <CardContent className="pt-4">
+                    <div className="flex items-start gap-2">
+                      <Target className="h-4 w-4 text-primary mt-1" />
+                      <div>
+                        <p className="font-medium line-clamp-1">{roadmap.name}</p>
+                        <p className="text-xs text-muted-foreground capitalize">
+                          {roadmap.type} Plan • {new Date(roadmap.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
-        <div className="container mx-auto max-w-4xl">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <MessageCircle className="h-6 w-6 text-primary" />
-                <div className="flex-1">
-                  <p className="font-medium">AI Career Assistant</p>
-                  <p className="text-sm text-muted-foreground">Ask me anything about careers</p>
-                </div>
-                <Button disabled>
-                  Coming in Phase 5
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      {/* Floating ChatBot */}
+      <ChatBot />
     </div>
   );
 };

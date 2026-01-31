@@ -8,8 +8,8 @@ from ai_career_advisor.services.career_llm import generate_career_details
 from ai_career_advisor.core.logger import logger
 
 
-DELAY_SECONDS = 8          # safe for Gemini free tier
-MAX_RETRY = 2              # per career
+DELAY_SECONDS = 8          
+MAX_RETRY = 2              
 
 
 async def seed_career_llm():

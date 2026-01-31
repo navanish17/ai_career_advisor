@@ -104,4 +104,13 @@ export interface GetRoadmapResponse {
 
 }
 
+export interface SavedRoadmap {
+  id: number;
+  name: string;
+  type: string;
+  career_goal: string;
+  roadmap_data: any;
+  created_at: string;
+}
+
 export type AvailableTemplatesResponse = string[];

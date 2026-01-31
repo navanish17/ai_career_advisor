@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from fastapi import HTTPException
 
-from ai_career_advisor.Schemas.roadmap import RoadmapGenerateRequest
+from ai_career_advisor.Schemas.roadmap import RoadmapGenerateRequest, SaveRoadmapRequest
 from ai_career_advisor.services.roadmap_service import RoadmapService
 from ai_career_advisor.core.database import get_db
 from ai_career_advisor.core.security import get_current_user
+from ai_career_advisor.models import Roadmap
+from ai_career_advisor.core.logger import logger
 
-router = APIRouter(prefix="/roadmap", tags=["Roadmap"])
+router = APIRouter(tags=["Roadmap"])
 
 
 @router.post("/generate")
@@ -31,6 +35,32 @@ async def generate_roadmap(
         raise HTTPException(status_code=400, detail=str(e))
     
 
+@router.get("/user")
+async def list_user_roadmaps(
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """List all saved roadmaps for current user"""
+    result = await db.execute(
+        select(Roadmap).where(
+            Roadmap.user_id == current_user.id,
+            Roadmap.name.isnot(None)  # Only saved roadmaps
+        ).order_by(Roadmap.created_at.desc())
+    )
+    roadmaps = result.scalars().all()
+    
+    return [
+        {
+            "id": r.id,
+            "name": r.name,
+            "type": r.roadmap_type,
+            "career_goal": r.career_goal,
+            "roadmap_data": r.roadmap_data,
+            "created_at": r.created_at.isoformat()
+        }
+        for r in roadmaps
+    ]
+
 @router.get("/{roadmap_id}")
 async def get_roadmap(
     roadmap_id: int,
@@ -45,4 +75,111 @@ async def get_roadmap(
         )
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    
+
+@router.get("/saved/{roadmap_id}")
+async def get_saved_roadmap(
+    roadmap_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Get specific saved roadmap by ID"""
+    result = await db.execute(
+        select(Roadmap).where(
+            Roadmap.id == roadmap_id,
+            Roadmap.user_id == current_user.id
+        )
+    )
+    roadmap = result.scalars().first()
+    
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+    
+    return {
+        "id": roadmap.id,
+        "name": roadmap.name,
+        "type": roadmap.roadmap_type,
+        "career_goal": roadmap.career_goal,
+        "roadmap_data": roadmap.roadmap_data,
+        "created_at": roadmap.created_at.isoformat()
+    }
+
+
+@router.post("/save")
+async def save_roadmap_endpoint(
+    payload: SaveRoadmapRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Save a generated roadmap (forward or backward)"""
+    try:
+        logger.info(f"📝 Saving roadmap - Type: {payload.type}, Name: {payload.name}")
+        logger.info(f"📝 Received roadmap_data: {payload.roadmap_data}")
+        
+        # Convert roadmap_data to dict if needed
+        roadmap_data = payload.roadmap_data
+        if hasattr(roadmap_data, 'dict'):
+            roadmap_data = roadmap_data.dict()
+        elif hasattr(roadmap_data, 'model_dump'):
+            roadmap_data = roadmap_data.model_dump()
+        
+        logger.info(f"📝 Converted roadmap_data: {roadmap_data}")
+        
+        # Extract class_level from roadmap_data if it exists (for forward roadmaps)
+        class_level = None
+        if isinstance(roadmap_data, dict):
+            class_level = roadmap_data.get("class_level")
+        
+        logger.info(f"📝 Extracted class_level: {class_level}")
+        
+        roadmap = Roadmap(
+            user_id=current_user.id,
+            name=payload.name,
+            roadmap_type=payload.type,
+            career_goal=payload.career_goal,
+            class_level=class_level,
+            roadmap_data=roadmap_data
+        )
+        
+        logger.info(f"📝 About to save roadmap to DB: {roadmap.__dict__}")
+        
+        db.add(roadmap)
+        await db.commit()
+        await db.refresh(roadmap)
+        
+        logger.success(f"✅ Roadmap saved successfully - ID: {roadmap.id}")
+        logger.info(f"✅ Saved roadmap_data: {roadmap.roadmap_data}")
+        
+        return {
+            "message": "Roadmap saved successfully",
+            "roadmap_id": roadmap.id
+        }
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"❌ Error saving roadmap: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to save roadmap: {str(e)}")
+
+
+@router.delete("/roadmap/{roadmap_id}")
+async def delete_roadmap_endpoint(
+    roadmap_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Delete a saved roadmap"""
+    result = await db.execute(
+        select(Roadmap).where(
+            Roadmap.id == roadmap_id,
+            Roadmap.user_id == current_user.id
+        )
+    )
+    roadmap = result.scalars().first()
+    
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+    
+    await db.delete(roadmap)
+    await db.commit()
+    
+    return {"message": "Roadmap deleted successfully"}
 

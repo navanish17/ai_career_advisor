@@ -1,24 +1,24 @@
 import json
-import time
+import asyncio
 from ai_career_advisor.core.logger import logger
-from ai_career_advisor.core.config import settings
-
-import google.generativeai as genai
+from ai_career_advisor.core.model_manager import ModelManager
 
 
-# Gemini configuration
-genai.configure(api_key=settings.GEMINI_API_KEY)
-
-model = genai.GenerativeModel("gemini-2.5-flash-lite")
-
-
-def generate_career_details(career_name: str) -> dict:
+def generate_career_details_sync(career_name: str) -> dict:
     """
     Generates career description, market trend and salary range
-    using Gemini LLM in a STRICT JSON format.
+    using Gemini LLM in a STRICT JSON format (synchronous wrapper).
+    """
+    return asyncio.run(generate_career_details(career_name))
+
+
+async def generate_career_details(career_name: str) -> dict:
+    """
+    Generates career description, market trend and salary range
+    using Gemini LLM in a STRICT JSON format (async version).
     """
 
-    logger.info(f"Generating LLM data for career: {career_name}")
+    logger.info(f"📚 Generating career data for: {career_name}")
 
     prompt = f"""
 You are a Career Summary Generator.
@@ -41,15 +41,14 @@ Rules:
 """
 
     try:
-        response = model.generate_content(prompt)
-
-        # Gemini returns text, parse it safely
-        raw_text = response.text.strip()
+        # Use ModelManager with smart fallback
+        raw_text = await ModelManager.generate_smart(prompt)
         data = json.loads(raw_text)
 
-        logger.success(f"LLM data generated for career: {career_name}")
+        logger.success(f"✅ Career data generated: {career_name}")
         return data
 
     except Exception as e:
-        logger.error(f"Failed to generate career data for {career_name}: {e}")
+        logger.error(f"❌ Failed to generate career data for {career_name}: {str(e)}")
         raise
+

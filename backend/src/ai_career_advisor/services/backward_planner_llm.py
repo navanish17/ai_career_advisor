@@ -1,14 +1,7 @@
 import json
-import google.generativeai as genai
-from ai_career_advisor.core.config import settings
-from ai_career_advisor.core.logger import logger
 import asyncio
-from functools import partial
-from google.api_core.exceptions import ResourceExhausted, GoogleAPIError
-
-
-genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.5-flash-lite")
+from ai_career_advisor.core.logger import logger
+from ai_career_advisor.core.model_manager import ModelManager
 
 
 class BackwardPlannerLLM:
@@ -242,17 +235,10 @@ IMPORTANT RULES:
                 # Rate limit delay
                 await asyncio.sleep(base_delay)
                 
-                # Call Gemini
-                loop = asyncio.get_event_loop()
-                response = await asyncio.wait_for(
-                    loop.run_in_executor(
-                        None,
-                        partial(model.generate_content, prompt)
-                    ),
-                    timeout=120.0  # 2 minutes for complex generation
-                )
-                
-                text = response.text.strip()
+                # Call ModelManager with smart fallback
+                logger.info(f"   📤 Calling AI model with smart fallback...")
+                text = await ModelManager.generate_smart(prompt)
+                text = text.strip()
                 
                 # Clean markdown
                 if text.startswith("```"):
@@ -355,31 +341,24 @@ IMPORTANT RULES:
                         "message": "Roadmap generation took too long. Please try again."
                     }
             
-            except ResourceExhausted:
-                logger.warning(f"   🟡 Rate limit hit (attempt {attempt})")
-                await asyncio.sleep(60)
-                if attempt < MAX_RETRIES:
-                    continue
-                else:
-                    logger.error(f"   ❌ Quota exhausted")
-                    return {
-                        "error": "quota_exhausted",
-                        "message": "API quota exhausted. Please try again later."
-                    }
-            
-            except GoogleAPIError as e:
-                logger.error(f"   🔴 API Error: {str(e)}")
-                return {
-                    "error": "api_error",
-                    "message": f"API error: {str(e)}"
-                }
-            
             except Exception as e:
-                logger.error(f"   🔴 Unexpected error: {str(e)}")
-                return {
-                    "error": "unexpected_error",
-                    "message": f"Unexpected error: {str(e)}"
-                }
+                logger.error(f"   🔴 Error: {str(e)[:150]}")
+                if "quota" in str(e).lower() or "rate limit" in str(e).lower():
+                    logger.warning(f"   🟡 Rate limiting detected, trying next approach...")
+                    if attempt < MAX_RETRIES:
+                        await asyncio.sleep(60)
+                        continue
+                    else:
+                        logger.error(f"   ❌ All models quota exhausted")
+                        return {
+                            "error": "all_models_quota_exhausted",
+                            "message": "API quota exhausted. Please try again later."
+                        }
+                else:
+                    return {
+                        "error": "api_error",
+                        "message": f"API error: {str(e)[:100]}"
+                    }
         
         # Fallback
         logger.error(f"   ❌ All retries exhausted for '{career_name}'")

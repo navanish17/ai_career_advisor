@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     SMTP_FROM_NAME: str
 
     GEMINI_API_KEY: Optional[str] = None
+    GEMINI_API_KEY_2: Optional[str] = None  # Alternative Gemini API key
+    GEMINI_API_KEY_3: Optional[str] = None  # Another alternative
     PERPLEXITY_API_KEY: Optional[str] = None
 
     API_PREFIX: str = "/api"

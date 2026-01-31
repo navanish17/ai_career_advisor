@@ -5,21 +5,26 @@ from ai_career_advisor.services.alert_scheduler import start_scheduler
 
 app = create_app()
 
+
+app.include_router(degree_router)     
+app.include_router(branch)            
+app.include_router(career)            
+
+
 app.include_router(auth, prefix="/api/auth")
-app.include_router(admin_router)
-app.include_router(agent, prefix="/api/agent")
-app.include_router(career, prefix="/api/career")
 app.include_router(profile, prefix="/api/profile")
 app.include_router(quiz, prefix="/api/quiz")
-app.include_router(branch)
-app.include_router(admission_alerts_router)
-app.include_router(backward_planner_router)
-app.include_router(college_router, prefix="/api")
-app.include_router(career_insight)
-app.include_router(chatbot_router)
-app.include_router(degree_router, prefix="/api/degree")
 app.include_router(roadmap, prefix="/api/roadmap")
 app.include_router(scholarships, prefix="/api/scholarships")
+app.include_router(agent, prefix="/api/agent")
+app.include_router(college_router, prefix="/api")
+
+
+app.include_router(admin_router)
+app.include_router(admission_alerts_router)
+app.include_router(backward_planner_router)
+app.include_router(career_insight)
+app.include_router(chatbot_router)
 
 @app.get('/health')
 async def health_check():

@@ -106,31 +106,77 @@ async def set_exam_alert(
     
     created_alerts = []
     
-    for alert_type in payload.alert_types:
-        if alert_type not in alert_configs:
-            continue
-        
-        config = alert_configs[alert_type]
-        target_date = config["target_date"]
-        
-        if not target_date:
-            logger.warning(f"Skipping {alert_type} - date not available")
-            continue
-        
-        alert_date = target_date - timedelta(days=config["days_before"])
-        
+    # If no dates found, create a "General" update alert
+    if not any(config["target_date"] for config in alert_configs.values()):
+        logger.warning("No specific dates found, creating general alert")
+        # Set a default check-in date 30 days from now
         alert = await ExamAlertService.create_alert(
             db,
             user_email=payload.user_email,
             entrance_exam_id=exam.id,
-            alert_type=alert_type,
-            target_date=target_date,
+            alert_type="general_update",
+            target_date=datetime.now().date() + timedelta(days=30),
             college_name=payload.college_name,
             degree=payload.degree,
             branch=payload.branch
         )
-        
         created_alerts.append(alert)
+    else:
+        for alert_type in payload.alert_types:
+            if alert_type not in alert_configs:
+                continue
+            
+            config = alert_configs[alert_type]
+            target_date = config["target_date"]
+            
+            if not target_date:
+                logger.warning(f"Skipping {alert_type} - date not available")
+                continue
+            
+            # Ensure target_date is a date object
+            if isinstance(target_date, str):
+                 try:
+                     target_date = datetime.strptime(target_date, "%Y-%m-%d").date()
+                 except ValueError:
+                     logger.error(f"Invalid date format: {target_date}")
+                     continue
+
+            alert_date = target_date - timedelta(days=config["days_before"])
+            
+            alert = await ExamAlertService.create_alert(
+                db,
+                user_email=payload.user_email,
+                entrance_exam_id=exam.id,
+                alert_type=alert_type,
+                target_date=target_date,
+                college_name=payload.college_name,
+                degree=payload.degree,
+                branch=payload.branch
+            )
+            
+            created_alerts.append(alert)
+    
+    # Send confirmation email via Brevo
+    if created_alerts:
+        from ai_career_advisor.services.brevo_service import BrevoService
+        
+        # Send a confirmation email for the first alert
+        first_alert = created_alerts[0]
+        await BrevoService.send_admission_alert(
+            to_email=payload.user_email,
+            exam_name=exam.exam_name,
+            college_name=payload.college_name,
+            degree=payload.degree,
+            branch=payload.branch or "",
+            alert_type="registration_start",  # Confirmation email
+            target_date=exam.registration_start_date or exam.exam_date,
+            exam_details={
+                "official_website": exam.official_website,
+                "conducting_body": exam.conducting_body,
+                "exam_pattern": exam.exam_pattern,
+                "syllabus_link": exam.syllabus_link
+            }
+        )
     
     return AdmissionAlertSuccessResponse(
         success=True,
@@ -159,3 +205,39 @@ async def get_my_alerts(
         "count": len(alerts),
         "alerts": [AlertResponse(**alert.to_dict()) for alert in alerts]
     }
+
+
+@router.post("/test-email")
+async def test_brevo_email(email: str):
+    """Test endpoint to verify Brevo email integration"""
+    from ai_career_advisor.services.brevo_service import BrevoService
+    from datetime import datetime, timedelta
+    
+    logger.info(f"📧 Sending test email to {email}")
+    
+    success = await BrevoService.send_admission_alert(
+        to_email=email,
+        exam_name="JEE Main 2026",
+        college_name="IIT Bombay",
+        degree="B.Tech",
+        branch="Computer Science",
+        alert_type="registration_start",
+        target_date=datetime.now() + timedelta(days=30),
+        exam_details={
+            "official_website": "https://jeemain.nta.nic.in",
+            "conducting_body": "National Testing Agency (NTA)",
+            "exam_pattern": "Computer Based Test (CBT)",
+            "syllabus_link": "https://jeemain.nta.nic.in/syllabus"
+        }
+    )
+    
+    if success:
+        return {
+            "success": True,
+            "message": f"Test email sent successfully to {email}. Check your inbox!"
+        }
+    else:
+        return {
+            "success": False,
+            "message": "Failed to send test email. Check BREVO_API_KEY in .env file"
+        }

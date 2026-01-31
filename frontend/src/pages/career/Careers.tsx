@@ -4,9 +4,9 @@ import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Briefcase, TrendingUp, DollarSign, Loader2, Lightbulb, Target } from 'lucide-react';
+import { ArrowLeft, Briefcase, TrendingUp, DollarSign, Loader2, Building2, Lightbulb, GraduationCap, Target, Map } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import type { Career, CareerInsight } from '@/types/career';
 
@@ -22,45 +22,35 @@ const Careers = () => {
 
   useEffect(() => {
     const fetchCareers = async () => {
-      if (!branchId) {
-        navigate('/degrees');
-        return;
-      }
-
       setIsLoading(true);
-      try {
-        const response = await api.get(`/api/career/from-branch/${branchId}`);
+      const response = await api.get<Career[]>(`/api/career/from-branch/${branchId}`);
+      
+      if (response.data) {
         setCareers(response.data);
-      } catch (error: any) {
+      } else {
         toast({
           title: 'Error',
-          description: error.response?.data?.detail || 'Failed to load careers',
+          description: response.error || 'Failed to load careers',
           variant: 'destructive',
         });
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
     
-    fetchCareers();
-  }, [branchId, navigate]);
+    if (branchId) {
+      fetchCareers();
+    }
+  }, [branchId]);
 
   const handleCareerClick = async (career: Career) => {
     setSelectedCareer(career);
     setIsLoadingInsight(true);
     
-    try {
-      const response = await api.get(`/api/career-insight/${career.id}`);
+    const response = await api.get<CareerInsight>(`/api/career-insight/${career.id}`);
+    if (response.data) {
       setInsight(response.data);
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.response?.data?.detail || 'Failed to load career insights',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoadingInsight(false);
     }
+    setIsLoadingInsight(false);
   };
 
   const closeDialog = () => {
@@ -71,6 +61,7 @@ const Careers = () => {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="container mx-auto max-w-4xl">
+        {/* Header */}
         <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
@@ -81,6 +72,7 @@ const Careers = () => {
           </div>
         </div>
 
+        {/* Careers Grid */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -113,21 +105,17 @@ const Careers = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <CardDescription className="line-clamp-2">
-                    {career.description || 'No description available'}
+                    {career.description}
                   </CardDescription>
                   <div className="flex flex-wrap gap-2">
-                    {career.salary_range && (
-                      <Badge variant="outline" className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3" />
-                        {career.salary_range}
-                      </Badge>
-                    )}
-                    {career.market_trend && (
-                      <Badge variant="outline" className="flex items-center gap-1">
-                        <TrendingUp className="h-3 w-3" />
-                        {career.market_trend}
-                      </Badge>
-                    )}
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <DollarSign className="h-3 w-3" />
+                      {career.average_salary}
+                    </Badge>
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <TrendingUp className="h-3 w-3" />
+                      {career.growth_outlook}
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -135,6 +123,7 @@ const Careers = () => {
           </div>
         )}
 
+        {/* Career Insight Dialog */}
         <Dialog open={!!selectedCareer} onOpenChange={closeDialog}>
           <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
             <DialogHeader>
@@ -155,58 +144,76 @@ const Careers = () => {
               <div className="space-y-6">
                 <Separator />
                 
+                {/* Skills Required */}
                 <div>
                   <h4 className="flex items-center gap-2 font-semibold mb-3">
                     <Lightbulb className="h-4 w-4 text-primary" />
                     Skills Required
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {insight.skills.map((skill, index) => (
+                    {insight.skills_required.map((skill, index) => (
                       <Badge key={index} variant="secondary">{skill}</Badge>
                     ))}
                   </div>
                 </div>
 
+                {/* Education Path */}
+                <div>
+                  <h4 className="flex items-center gap-2 font-semibold mb-2">
+                    <GraduationCap className="h-4 w-4 text-primary" />
+                    Education Path
+                  </h4>
+                  <p className="text-sm text-muted-foreground">{insight.education_path}</p>
+                </div>
+
+                {/* Job Roles */}
                 <div>
                   <h4 className="flex items-center gap-2 font-semibold mb-3">
                     <Target className="h-4 w-4 text-primary" />
-                    Internships
+                    Common Job Roles
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {insight.internships.map((internship, index) => (
-                      <Badge key={index} variant="outline">{internship}</Badge>
+                    {insight.job_roles.map((role, index) => (
+                      <Badge key={index} variant="outline">{role}</Badge>
                     ))}
                   </div>
                 </div>
 
+                {/* Top Companies */}
                 <div>
                   <h4 className="flex items-center gap-2 font-semibold mb-3">
-                    <Target className="h-4 w-4 text-primary" />
-                    Projects to Build
-                  </h4>
-                  {Object.entries(insight.projects).map(([level, projectList]) => (
-                    <div key={level} className="mb-3">
-                      <p className="text-sm font-medium capitalize mb-2">{level}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {projectList.map((project, index) => (
-                          <Badge key={index} variant="outline">{project}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div>
-                  <h4 className="flex items-center gap-2 font-semibold mb-3">
-                    <Target className="h-4 w-4 text-primary" />
-                    Programs & Certifications
+                    <Building2 className="h-4 w-4 text-primary" />
+                    Top Companies
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {insight.programs.map((program, index) => (
-                      <Badge key={index}>{program}</Badge>
+                    {insight.top_companies.map((company, index) => (
+                      <Badge key={index}>{company}</Badge>
                     ))}
                   </div>
                 </div>
+
+                {/* Future Prospects */}
+                <div>
+                  <h4 className="flex items-center gap-2 font-semibold mb-2">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    Future Prospects
+                  </h4>
+                  <p className="text-sm text-muted-foreground">{insight.future_prospects}</p>
+                </div>
+
+                <Separator />
+                
+                <DialogFooter>
+                  <Button 
+                    className="w-full"
+                    onClick={() => navigate('/roadmap/forward', { 
+                      state: { careerId: selectedCareer?.id, careerName: selectedCareer?.name } 
+                    })}
+                  >
+                    <Map className="h-4 w-4 mr-2" />
+                    Generate Roadmap for This Career
+                  </Button>
+                </DialogFooter>
               </div>
             ) : (
               <p className="text-center text-muted-foreground py-4">

@@ -1,13 +1,8 @@
 import json
-import google.generativeai as genai
 from ai_career_advisor.core.config import settings
 from ai_career_advisor.core.logger import logger
-import asyncio
-from functools import partial
+import httpx
 from datetime import datetime
-
-genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
 
 class EntranceExamLLM:
@@ -20,8 +15,15 @@ class EntranceExamLLM:
         branch: str = None
     ) -> dict:
         
-        logger.info(f"Fetching entrance exam for {college_name} - {degree} {branch or ''}")
+        logger.info(f"Fetching entrance exam for {college_name} - {degree} {branch or ''} using Perplexity")
         
+        PERPLEXITY_API_KEY = settings.PERPLEXITY_API_KEY or ""
+        PERPLEXITY_MODEL = "sonar-pro"
+
+        if not PERPLEXITY_API_KEY:
+            logger.error("❌ Perplexity API key missing")
+            return {"error": "api_key_missing"}
+
         current_year = datetime.now().year
         current_month = datetime.now().month
         
@@ -31,73 +33,84 @@ class EntranceExamLLM:
             academic_year = current_year
         
         prompt = f"""
-You are an Indian education entrance exam expert.
+You are an expert Indian education counselor. Find strict entrance exam details.
 
-COLLEGE: {college_name}
-DEGREE: {degree}
-BRANCH: {branch or 'General'}
-ACADEMIC YEAR: {academic_year}
+TARGET:
+College: {college_name}
+Degree: {degree}
+Branch: {branch or 'General'}
+Target Academic Year: {academic_year}
 
-Task: Identify the ACTIVE entrance exam required for admission.
+TASK:
+Identify the OFFICIAL entrance exam required for admission.
 
-Return ONLY valid JSON (no markdown):
+SEARCH STRATEGY:
+1. Check official admission page of {college_name}
+2. Check exams like JEE Main, JEE Advanced, NEET, CAT, GATE, CUET (if applicable)
+3. Check state-level CETs (e.g., MHT CET, KCET, WBJEE)
 
+OUTPUT JSON FORMAT:
 {{
-  "exam_name": "JEE Main",
-  "exam_full_name": "Joint Entrance Examination - Main",
-  "conducting_body": "NTA",
-  "exam_date": "2026-04-06",
-  "registration_start_date": "2026-02-01",
-  "registration_end_date": "2026-03-15",
-  "exam_pattern": "MCQ",
-  "official_website": "https://jeemain.nta.nic.in",
-  "syllabus_link": "https://jeemain.nta.nic.in/syllabus",
+  "exam_name": "Exam Name",
+  "exam_full_name": "Full Name",
+  "conducting_body": "Authority Name",
+  "exam_date": "YYYY-MM-DD",
+  "registration_start_date": "YYYY-MM-DD",
+  "registration_end_date": "YYYY-MM-DD",
+  "exam_pattern": "CBT/Offline",
+  "official_website": "URL",
+  "syllabus_link": "URL",
   "academic_year": "{academic_year}",
-  "is_active": true,
-  "status": "upcoming"
+  "is_active": true/false,
+  "status": "upcoming/ongoing/completed"
 }}
 
-Rules:
-- Return ONLY active/upcoming exams (not past exams)
-- Use actual {academic_year} dates
-- If registration closed, set status to "exam_pending"
-- If exam finished, set is_active to false
-- Be accurate with Indian exam calendars
-
-Examples:
-- IIT Bombay, BTech, CS → JEE Advanced
-- AIIMS Delhi, MBBS → NEET UG
-- Delhi University, BSc, CS → CUET UG
-- BITS Pilani, BTech → BITSAT
-- IIM Ahmedabad, MBA → CAT
-- NLU Delhi, LLB → CLAT
+RULES:
+✅ Return ONLY valid JSON
+✅ Use actual/tentative dates for {academic_year}
+✅ If dates announced: use exact date
+✅ If dates NOT announced: estimate based on previous year trends and label "Tentative" in status
+✅ If exam is over for this cycle, set is_active: false
 """
         
         try:
-            loop = asyncio.get_event_loop()
-            response = await asyncio.wait_for(
-                loop.run_in_executor(None, partial(model.generate_content, prompt)),
-                timeout=60.0
-            )
-            
-            text = response.text.strip()
-            
-            if text.startswith("```"):
-                text = text.replace("```json", "").replace("```", "").strip()
-            
-            exam_data = json.loads(text)
-            
-            logger.success(f"Found exam: {exam_data.get('exam_name')}")
-            return exam_data
-        
-        except asyncio.TimeoutError:
-            logger.error("Timeout fetching exam data")
-            return {"error": "timeout"}
-        
-        except json.JSONDecodeError as e:
-            logger.error(f"JSON parse error: {str(e)}")
-            return {"error": "invalid_json"}
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    "https://api.perplexity.ai/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": PERPLEXITY_MODEL,
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": "You are a precise data extraction assistant. Return ONLY valid JSON."
+                            },
+                            {
+                                "role": "user",
+                                "content": prompt
+                            }
+                        ]
+                    }
+                )
+                
+                if response.status_code != 200:
+                    logger.error(f"❌ Perplexity API error: {response.status_code}")
+                    return {"error": f"api_error_{response.status_code}"}
+                
+                data = response.json()
+                text = data["choices"][0]["message"]["content"].strip()
+                
+                # Clean markdown
+                if text.startswith("```"):
+                    text = text.replace("```json", "").replace("```", "").strip()
+                
+                exam_data = json.loads(text)
+                logger.success(f"Found exam: {exam_data.get('exam_name')}")
+                return exam_data
         
         except Exception as e:
-            logger.error(f"Error: {str(e)}")
+            logger.error(f"Error fetching exam data: {e}")
             return {"error": str(e)}

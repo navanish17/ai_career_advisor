@@ -20,3 +20,12 @@ class CareerService:
             .order_by(Career.name)
         )
         return result.scalars().all()
+
+    
+    @staticmethod
+    async def get_career_by_id(career_id: int, db: AsyncSession):
+        """Get career by ID"""
+        result = await db.execute(
+            select(Career).where(Career.id == career_id)
+        )
+        return result.scalar_one_or_none()

@@ -23,7 +23,7 @@ class IntentCheckResponse(BaseModel):
 class ChatbotAskRequest(BaseModel):
     query: str = Field(
         ..., 
-        min_length=3, 
+        min_length=1,  # Allow short greetings like "hi"
         max_length=500, 
         description="User's career-related question",
         example="Software engineer kaise bane?"

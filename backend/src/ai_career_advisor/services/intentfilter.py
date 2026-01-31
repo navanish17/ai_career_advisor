@@ -1,20 +1,45 @@
-import google.generativeai as genai
 from ai_career_advisor.core.config import settings
 from ai_career_advisor.core.logger import logger
+import httpx
 import asyncio
-from functools import partial
-
-
-genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
 
 
 class IntentFilter:
     """
-    Simple 2-step intent filter:
-    1. Check blacklist (instant reject)
-    2. Ask LLM if career-related
+    Simple 3-step intent filter:
+    1. Check greetings (instant accept with friendly response)
+    2. Check blacklist (instant reject)
+    3. Use simple keyword matching for career topics
     """
+    
+    # Greetings that should get a friendly response
+    GREETINGS = [
+        "hi", "hello", "hey", "namaste", "hii", "helo", "hola",
+        "good morning", "good afternoon", "good evening",
+        "kaise ho", "how are you", "what's up", "sup"
+    ]
+    
+    # Career/Education keywords (if ANY found, it's career-related)
+    CAREER_KEYWORDS = [
+        # Education
+        "college", "university", "iit", "nit", "aiims", "school", "degree",
+        "btech", "bsc", "mba", "mbbs", "engineering", "medical", "commerce",
+        "science", "arts", "diploma", "phd", "masters", "bachelor",
+        
+        # Exams
+        "jee", "neet", "gate", "cat", "upsc", "ssc", "exam", "entrance",
+        "cuet", "clat", "nda", "cds", "ias", "ips", "test", "cutoff",
+        
+        # Career
+        "career", "job", "salary", "placement", "package", "internship",
+        "engineer", "doctor", "teacher", "lawyer", "ca", "cs", "software",
+        "developer", "data scientist", "analyst", "manager", "consultant",
+        
+        # Guidance
+        "course", "stream", "branch", "admission", "eligibility", "fees",
+        "scholarship", "counseling", "guidance", "roadmap", "preparation",
+        "study", "skill", "training", "certification", "after 10th", "after 12th"
+    ]
     
     # Only blocked/inappropriate keywords
     BLACKLIST_KEYWORDS = [
@@ -39,14 +64,14 @@ class IntentFilter:
         Returns: {
             "is_career": bool,
             "confidence": float,
-            "method": "blacklist" | "llm",
+            "method": "greeting" | "blacklist" | "keyword" | "default",
             "reason": str
         }
         """
         query_lower = query.lower().strip()
         
         # Basic validation
-        if len(query_lower) < 3:
+        if len(query_lower) < 2:
             return {
                 "is_career": False,
                 "confidence": 1.0,
@@ -54,10 +79,22 @@ class IntentFilter:
                 "reason": "Query too short"
             }
         
-        # STEP 1: Check blacklist
+        # STEP 1: Check if it's a greeting
+        for greeting in IntentFilter.GREETINGS:
+            if query_lower == greeting or query_lower.startswith(greeting + " "):
+                logger.info(f"✋ Greeting detected: {greeting}")
+                return {
+                    "is_career": True,  # Allow greetings to pass through
+                    "confidence": 1.0,
+                    "method": "greeting",
+                    "reason": "Greeting detected",
+                    "is_greeting": True  # Special flag
+                }
+        
+        # STEP 2: Check blacklist
         for keyword in IntentFilter.BLACKLIST_KEYWORDS:
             if keyword in query_lower:
-                logger.warning(f"Blacklist keyword found: {keyword}")
+                logger.warning(f"🚫 Blacklist keyword found: {keyword}")
                 return {
                     "is_career": False,
                     "confidence": 1.0,
@@ -65,70 +102,25 @@ class IntentFilter:
                     "reason": f"Blocked keyword: {keyword}"
                 }
         
-        # STEP 2: Ask LLM (no blacklist match, so ask LLM)
-        logger.info(f"No blacklist match, asking LLM: {query[:50]}")
-        return IntentFilter._llm_classify(query)
-    
-    @staticmethod
-    def _llm_classify(query: str) -> dict:
-        """
-        LLM decides if query is career/education related
-        """
-        prompt = f"""You are an intent classifier for an Indian education and career counseling chatbot.
-
-USER QUERY: "{query}"
-
-Is this query related to EDUCATION or CAREER guidance?
-
-CAREER/EDUCATION topics:
-- Career choices (any profession: doctor, engineer, IAS, teacher, artist, etc.)
-- Educational paths (streams, degrees, colleges, entrance exams)
-- Study guidance, skills, preparation, fees, scholarships
-- Job prospects, salaries, placements
-
-NOT CAREER/EDUCATION:
-- General knowledge, entertainment, sports, cooking, weather
-- Personal chitchat unrelated to career
-
-Reply with ONLY one word: CAREER or NON_CAREER"""
-
-        try:
-            loop = asyncio.get_event_loop()
-            response = loop.run_until_complete(
-                loop.run_in_executor(
-                    None,
-                    partial(model.generate_content, prompt)
-                )
-            )
-            
-            intent = response.text.strip().upper()
-            
-            if "CAREER" in intent:
-                logger.success(f"LLM: Query is career-related")
+        # STEP 3: Check career keywords
+        for keyword in IntentFilter.CAREER_KEYWORDS:
+            if keyword in query_lower:
+                logger.success(f"✅ Career keyword found: {keyword}")
                 return {
                     "is_career": True,
-                    "confidence": 0.90,
-                    "method": "llm",
-                    "reason": "LLM classified as career-related"
-                }
-            else:
-                logger.info(f"LLM: Query is NOT career-related")
-                return {
-                    "is_career": False,
-                    "confidence": 0.90,
-                    "method": "llm",
-                    "reason": "LLM classified as non-career"
+                    "confidence": 0.95,
+                    "method": "keyword",
+                    "reason": f"Career keyword: {keyword}"
                 }
         
-        except Exception as e:
-            logger.error(f"LLM error: {str(e)}")
-            # Failsafe: Allow query if LLM fails
-            return {
-                "is_career": True,
-                "confidence": 0.5,
-                "method": "llm_error",
-                "reason": "LLM error, allowing query as failsafe"
-            }
+        # STEP 4: Default - allow it (better to answer than reject)
+        logger.info(f"🤔 No clear match, allowing query as potential career question")
+        return {
+            "is_career": True,
+            "confidence": 0.6,
+            "method": "default",
+            "reason": "No blacklist match, allowing as potential career query"
+        }
     
     @staticmethod
     def get_rejection_message() -> dict:
@@ -154,3 +146,24 @@ Koi career ya education-related question poocho! 😊""",
             "confidence": 0.0,
             "responsetype": "rejected"
         }
+    
+    @staticmethod
+    def get_greeting_response() -> str:
+        """Friendly greeting response"""
+        return """👋 **Hello! Main aapka AI Career Counselor hoon!**
+
+Main Indian students ko career aur education guidance deta hoon. 
+
+**Aap mujhse puch sakte ho:**
+💼 Career options (Engineering, Medical, Commerce, Arts)
+🎓 College selection (IITs, NITs, private colleges)
+📝 Entrance exams (JEE, NEET, CUET, CAT, etc.)
+💰 Fees, placements, salaries
+📚 Study tips aur roadmaps
+
+**Kuch examples:**
+- "12th ke baad kya kare?"
+- "IIT mein admission kaise le?"
+- "Software engineer ka salary kitna hai?"
+
+Apna question poocho! 😊"""

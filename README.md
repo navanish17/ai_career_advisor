@@ -346,6 +346,8 @@ docker-compose up --build
 ---
 
 ## 📄 License
+pinned: false
+license: other
 
 This project is developed for educational purposes as part of CDAC coursework.
 

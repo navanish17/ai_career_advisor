@@ -40,10 +40,10 @@ COPY alembic/ /app/alembic/
 RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port (Render sets PORT env var, default to 8000)
-ENV PORT=8000
-EXPOSE 8000
+# Expose port 7860 (Required by Hugging Face Spaces)
+ENV PORT=7860
+EXPOSE 7860
 
 # Run with Gunicorn + Uvicorn workers
-# Adjust --workers based on CPU cores (Render Starter = 1-2 workers)
+# Adjust --workers based on CPU cores (HF Spaces = 2 vCPU)
 CMD gunicorn src.ai_career_advisor.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT

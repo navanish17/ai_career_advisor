@@ -16,6 +16,12 @@ from .college_entrance_mapping import CollegeEntranceMapping
 from .exam_alert import ExamAlert
 from .chatconversation import ChatConversation
 
+# Recommendation System Models
+from .user_preferences import UserPreferences
+from .career_attributes import CareerAttributes
+from .user_career_interaction import UserCareerInteraction
+
+
 
 
 

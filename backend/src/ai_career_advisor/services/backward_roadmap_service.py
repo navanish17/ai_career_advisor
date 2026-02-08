@@ -17,7 +17,7 @@ class BackwardRoadmapService:
         career_name: str
     ) -> Optional[BackwardRoadmap]:
         """
-        Get existing roadmap by normalized career name
+        Get existing roadmap by normalized career name (case-insensitive)
         
         Args:
             db: Database session
@@ -26,13 +26,23 @@ class BackwardRoadmapService:
         Returns:
             BackwardRoadmap object or None
         """
+        from sqlalchemy import func
+        
+        # Case-insensitive matching
         result = await db.execute(
             select(BackwardRoadmap)
-            .where(BackwardRoadmap.normalized_career == career_name)
+            .where(func.lower(BackwardRoadmap.normalized_career) == career_name.lower())
             .order_by(BackwardRoadmap.created_at.desc())
             .limit(1)
         )
-        return result.scalars().first()
+        roadmap = result.scalars().first()
+        
+        if roadmap:
+            logger.info(f"✅ Found roadmap in DB: {roadmap.normalized_career}")
+        else:
+            logger.info(f"📭 No roadmap found for: {career_name}")
+        
+        return roadmap
     
     @staticmethod
     async def create_from_llm(

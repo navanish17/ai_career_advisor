@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, User, BookOpen, Loader2, ClipboardList, GraduationCap, Map, Target, ArrowRight, FolderOpen, Building2 } from 'lucide-react';
+import { LogOut, User, BookOpen, Loader2, ClipboardList, GraduationCap, Map, Target, ArrowRight, FolderOpen, Building2, Compass } from 'lucide-react';
 import type { Profile } from '@/types/auth';
 import type { SavedRoadmap } from '@/types/roadmap';
 import ChatBot from '@/components/chat/chatbot';
@@ -126,8 +126,21 @@ const Home = () => {
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-2">
                 <ClipboardList className="h-6 w-6 text-primary" />
               </div>
-              <CardTitle className="text-lg">Career Quiz</CardTitle>
+              <CardTitle className="text-lg">Stream Quiz</CardTitle>
               <CardDescription>Discover your ideal stream based on interests</CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card
+            className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50"
+            onClick={() => navigate('/career-finder')}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-2">
+                <Compass className="h-6 w-6 text-primary" />
+              </div>
+              <CardTitle className="text-lg">Career Finder</CardTitle>
+              <CardDescription>AI-powered personalized career recommendations</CardDescription>
             </CardHeader>
           </Card>
 

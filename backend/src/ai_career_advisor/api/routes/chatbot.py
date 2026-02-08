@@ -50,7 +50,8 @@ async def ask_chatbot(
             query=request.query,
             session_id=request.sessionid,
             user_email=None,
-            db=db
+            db=db,
+            model_preference=request.model
         )
         
         return {
@@ -74,17 +75,23 @@ async def get_conversation_history(
     db: AsyncSession = Depends(get_db)
 ):
     try:
+        # Get last 10 conversations for this session (most recent first, then reverse for display)
         result = await db.execute(
             select(ChatConversation)
             .where(ChatConversation.sessionid == sessionid)
             .order_by(ChatConversation.createdat.desc())
+            .limit(10)  # Only last 10 conversations
         )
         conversations = result.scalars().all()
+        
+        # Reverse to show in chronological order (oldest first)
+        conversations = list(reversed(conversations))
         
         return {
             "sessionid": sessionid,
             "conversations": [conv.to_dict() for conv in conversations],
-            "total": len(conversations)
+            "total": len(conversations),
+            "limited_to": 10
         }
     
     except Exception as e:

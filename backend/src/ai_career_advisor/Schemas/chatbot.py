@@ -32,6 +32,10 @@ class ChatbotAskRequest(BaseModel):
         None, 
         description="Session ID for conversation tracking"
     )
+    model: Optional[str] = Field(
+        None,
+        description="Preferred model: 'auto', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'sonar-pro'"
+    )
 
 
 class ChatbotAskResponse(BaseModel):

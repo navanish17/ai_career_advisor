@@ -5,10 +5,12 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useChat } from '@/hooks/usechat';
 import ChatMessageList from './chatmsglist';
+import { ModelType } from './model-selector';
 import ChatInput from './chatinput';
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<ModelType>("auto");
   const { messages, isLoading, sendMessage } = useChat();
 
   // Close on escape key
@@ -79,7 +81,12 @@ const ChatBot = () => {
 
         {/* Input Area */}
         <div className="p-4 bg-background">
-          <ChatInput onSend={sendMessage} isLoading={isLoading} />
+          <ChatInput
+            onSend={(text) => sendMessage(text, selectedModel)}
+            isLoading={isLoading}
+            selectedModel={selectedModel}
+            onModelSelect={setSelectedModel}
+          />
         </div>
       </Card>
     </div>

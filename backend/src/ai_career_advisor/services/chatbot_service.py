@@ -8,6 +8,10 @@ import httpx
 import time
 import uuid
 import re
+import os
+
+# Phase 4: LangGraph Agent (feature flag)
+USE_AGENT_GRAPH = os.getenv("USE_AGENT_GRAPH", "true").lower() == "true"
 
 
 class ChatbotService:
@@ -29,14 +33,21 @@ class ChatbotService:
             "message": "\n\n🎯 **Want personalized stream recommendation?**\n👉 [Click here to use our Stream Finder](/stream-finder)"
         },
         "roadmap": {
-            "keywords": ["roadmap", "how to become", "kaise bane", "career path", "step by step", "guide to become", "steps to become", "what after 12th", "12th ke baad", "after 12th", "after graduation"],
-            "link": "/career-roadmap",
-            "message": "\n\n🗺️ **Get a detailed career roadmap!**\n👉 [Generate your personalized roadmap here](/career-roadmap)"
+            "keywords": [
+                "roadmap", "how to become", "become a ", "become an ", "want to become",
+                "kaise bane", "kaise banu", "banna hai", "banna chahta",
+                "career path", "step by step", "guide to become", "steps to become",
+                "what after 12th", "12th ke baad", "after 12th", "after graduation",
+                "software engineer", "data scientist", "doctor", "lawyer", "ca ", "chartered accountant",
+                "engineer", "developer", "designer", "manager"
+            ],
+            "link": "/roadmap/backward",
+            "message": "\n\n🗺️ **Get a detailed career roadmap!**\n👉 [Generate your personalized roadmap here](/roadmap/backward)"
         },
         "college": {
             "keywords": ["college find", "find college", "best college", "top college", "college for", "iit admission", "nit admission", "bits", "college recommendation"],
-            "link": "/college-finder",
-            "message": "\n\n🏫 **Looking for the perfect college?**\n👉 [Use our College Finder tool](/college-finder)"
+            "link": "/colleges",
+            "message": "\n\n🏫 **Looking for the perfect college?**\n👉 [Use our College Finder tool](/colleges)"
         }
     }
     
@@ -68,7 +79,8 @@ class ChatbotService:
         query: str,
         session_id: str = None,
         user_email: str = None,
-        db: AsyncSession = None
+        db: AsyncSession = None,
+        model_preference: str = "auto"
     ) -> Dict[str, Any]:
         """
         Main chatbot entry point
@@ -86,6 +98,54 @@ class ChatbotService:
         use_hindi = ChatbotService._is_hindi_query(query)
         logger.info(f"🌐 Language: {'Hindi/Hinglish' if use_hindi else 'English'}")
         
+        # Phase 4: Use LangGraph Agent if enabled
+        if USE_AGENT_GRAPH:
+            try:
+                from ai_career_advisor.agents.career_agent import CareerAgent
+                
+                agent = CareerAgent(db=db)
+                result = await agent.run(
+                    query=query,
+                    user_email=user_email or "anonymous",
+                    session_id=session_id,
+                    language="hi" if use_hindi else "en",
+                    model_preference=model_preference
+                )
+                
+                if result["success"]:
+                    response_text = result["response"]
+                    
+                    # Add feature links
+                    feature_links = ChatbotService._detect_features(query)
+                    if feature_links:
+                        response_text += feature_links
+                    
+                    # Add sources
+                    sources = ["AI Agent - Career Pilot"]
+                    sources_text = ChatbotService._format_sources(sources, "agent")
+                    if sources_text:
+                        response_text += sources_text
+                    
+                    response_time = time.time() - start_time
+                    
+                    await ChatbotService._save_conversation(
+                        db, session_id, user_email, query, response_text,
+                        "agent", 0.9, response_time, sources
+                    )
+                    
+                    return {
+                        "session_id": session_id,
+                        "query": query,
+                        "response": response_text,
+                        "sources": sources,
+                        "confidence": 0.9,
+                        "response_type": "agent",
+                        "response_time": response_time
+                    }
+            except Exception as e:
+                logger.warning(f"Agent failed, falling back to legacy: {e}")
+                # Fall through to legacy implementation
+        
         try:
             # Step 1: Check intent (greetings, career, or blocked)
             intent_result = IntentFilter.is_career_related(query)
@@ -102,7 +162,31 @@ class ChatbotService:
                     query, session_id, user_email, db, start_time, use_hindi
                 )
             
-            # Step 2: Try RAG first (with error handling)
+            # Step 2: FEATURE ROUTING - Check if intent matches a feature
+            # For roadmap requests, query existing roadmaps from BackwardPlanner feature
+            detected_intent = intent_result.get("intent", "")
+            
+            # KEYWORD OVERRIDE: Force roadmap routing for "I want to become X" queries
+            # (ML model sometimes classifies these as career_query instead of roadmap_request)
+            query_lower = query.lower()
+            roadmap_keywords = [
+                "want to become", "wanna become", "become a ", "become an ",
+                "how to become", "kaise bane", "kaise banu", "banna hai",
+                "banna chahta", "banna chahti", "roadmap for", "path to become",
+                "steps to become", "guide to become"
+            ]
+            if any(kw in query_lower for kw in roadmap_keywords):
+                detected_intent = "roadmap_request"
+                logger.info(f"🔀 Keyword override: treating as roadmap_request")
+            
+            if detected_intent == "roadmap_request":
+                feature_response = await ChatbotService._handle_roadmap_request(
+                    query, session_id, user_email, db, start_time, use_hindi
+                )
+                if feature_response:
+                    return feature_response
+            
+            # Step 3: Try RAG for other queries (with error handling)
             rag_result = await ChatbotService._safe_rag_search(query)
             
             # Step 3: Generate response with sources
@@ -127,8 +211,8 @@ class ChatbotService:
             if feature_links:
                 response_text += feature_links
             
-            # Step 5: Format sources into response
-            sources_text = ChatbotService._format_sources(sources)
+            # Step 5: Format sources into response with data source indicator
+            sources_text = ChatbotService._format_sources(sources, response_type)
             if sources_text:
                 response_text += sources_text
             
@@ -166,8 +250,8 @@ class ChatbotService:
             }
     
     @staticmethod
-    def _format_sources(sources: List[str]) -> str:
-        """Format sources into a readable string"""
+    def _format_sources(sources: List[str], response_type: str = "") -> str:
+        """Format sources into a readable string with clickable links"""
         if not sources:
             return ""
         
@@ -177,9 +261,23 @@ class ChatbotService:
         if not clean_sources:
             return ""
         
-        source_text = "\n\n📚 **Sources:**\n"
+        # Add data source indicator with different symbols
+        source_indicators = {
+            "feature_db": "🗄️ *Source: Database*",
+            "rag_verified": "📚 *Source: Knowledge Base*",
+            "perplexity_search": "🌐 *Source: Web*",
+            "greeting": "🤖 *Source: System*",
+        }
+        
+        indicator = source_indicators.get(response_type, "")
+        source_text = f"\n\n{indicator}\n\n**References:**\n" if indicator else "\n\n**References:**\n"
+        
         for i, source in enumerate(clean_sources[:5], 1):  # Max 5 sources
-            source_text += f"{i}. {source}\n"
+            # Make URLs clickable in markdown
+            if source.startswith("http://") or source.startswith("https://"):
+                source_text += f"{i}. [{source}]({source})\n"
+            else:
+                source_text += f"{i}. {source}\n"
         
         return source_text
     
@@ -274,6 +372,114 @@ Please ask a career or education-related question! 😊"""
             "response_type": "rejected",
             "response_time": response_time
         }
+    
+    @staticmethod
+    async def _handle_roadmap_request(
+        query: str, session_id: str, user_email: str,
+        db: AsyncSession, start_time: float, use_hindi: bool
+    ) -> Dict[str, Any]:
+        """
+        Handle roadmap requests by checking existing BackwardPlanner data first.
+        Returns short summary + redirect link to full feature.
+        Returns None if no existing roadmap found (falls back to RAG/LLM).
+        """
+        try:
+            # Extract career name from query
+            career_name = ChatbotService._extract_career_from_query(query)
+            
+            if not career_name or not db:
+                return None
+            
+            # Query existing roadmap from BackwardPlanner feature database
+            from ai_career_advisor.services.backward_roadmap_service import BackwardRoadmapService
+            roadmap = await BackwardRoadmapService.get_by_career(db, career_name=career_name)
+            
+            if not roadmap:
+                logger.info(f"📭 No existing roadmap for '{career_name}' - will use RAG/LLM")
+                return None
+            
+            logger.success(f"✅ Found existing roadmap for '{career_name}' in DB!")
+            
+            # Format short answer with redirect link
+            if use_hindi:
+                response_text = f"""🎯 **{roadmap.normalized_career} banne ke liye:**
+
+📚 **Education:** {roadmap.career_description[:200] if roadmap.career_description else 'Details available'}...
+
+✨ **Quick Overview:**
+- 📝 Exams: {', '.join(roadmap.entrance_exams[:3]) if roadmap.entrance_exams else 'Check feature'}
+- 🏫 Top Colleges: {', '.join(roadmap.top_colleges[:3]) if roadmap.top_colleges else 'IITs, NITs'}
+- 💰 Salary Range: {roadmap.career_prospects.get('salary_range', 'Competitive') if roadmap.career_prospects else 'Competitive'}
+
+🗺️ **Complete step-by-step roadmap chahiye?**
+👉 [Yahan click karein - Career Roadmap](/roadmap/backward)
+
+*Wahan apna personalized roadmap banao with timeline, skills, projects aur more!*"""
+            else:
+                response_text = f"""🎯 **To become a {roadmap.normalized_career}:**
+
+📚 **Overview:** {roadmap.career_description[:200] if roadmap.career_description else 'Details available in our roadmap generator'}...
+
+✨ **Quick Facts:**
+- 📝 Key Exams: {', '.join(roadmap.entrance_exams[:3]) if roadmap.entrance_exams else 'Check feature for details'}
+- 🏫 Top Colleges: {', '.join(roadmap.top_colleges[:3]) if roadmap.top_colleges else 'IITs, NITs, top institutes'}
+- 💰 Salary Range: {roadmap.career_prospects.get('salary_range', 'Competitive packages') if roadmap.career_prospects else 'Competitive packages'}
+
+🗺️ **Want a detailed step-by-step roadmap?**
+👉 [Click here to use our Career Roadmap](/roadmap/backward)
+
+*Get a personalized roadmap with timeline, required skills, projects to build, certifications, and more!*"""
+            
+            response_time = time.time() - start_time
+            
+            await ChatbotService._save_conversation(
+                db, session_id, user_email, query, response_text,
+                "feature_db", 1.0, response_time, ["Career Roadmap Database"]
+            )
+            
+            return {
+                "session_id": session_id,
+                "query": query,
+                "response": response_text,
+                "sources": ["Career Roadmap Database", f"Roadmap ID: {roadmap.id}"],
+                "confidence": 1.0,
+                "response_type": "feature_db",
+                "response_time": response_time,
+                "feature_redirect": "/roadmap/backward"
+            }
+            
+        except Exception as e:
+            logger.error(f"Error checking roadmap DB: {e}")
+            return None
+    
+    @staticmethod
+    def _extract_career_from_query(query: str) -> str:
+        """Extract career name from query like 'I want to become a software engineer'"""
+        import re
+        query_lower = query.lower().strip()
+        
+        # Patterns to match
+        patterns = [
+            r"(?:i want to become|become|be) (?:a |an )?(.+?)(?:\?|$|\.)",
+            r"(?:how to become|kaise bane|kaise banu) (?:a |an )?(.+?)(?:\?|$|\.)",
+            r"roadmap (?:for|to become) (?:a |an )?(.+?)(?:\?|$|\.)",
+            r"(.+?) (?:banna hai|banna chahta|banna chahti|banana hai)",
+            r"career (?:in|as) (?:a |an )?(.+?)(?:\?|$|\.)",
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, query_lower)
+            if match:
+                career = match.group(1).strip()
+                # Normalize common terms
+                career = career.replace("sde", "software engineer")
+                career = career.replace("se", "software engineer")
+                career = career.replace("ds", "data scientist")
+                # Title case for DB matching
+                return career.title()
+        
+        return None
+
     
     @staticmethod
     async def _safe_rag_search(query: str) -> Dict[str, Any]:

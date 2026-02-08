@@ -1,0 +1,3603 @@
+{
+  "intent_labels": [
+    "greeting",
+    "farewell",
+    "career_query",
+    "college_query",
+    "roadmap_request",
+    "exam_query",
+    "degree_query",
+    "recommendation_request",
+    "off_topic"
+  ],
+  "training_data": [
+    {
+      "text": "hello",
+      "label": "greeting"
+    },
+    {
+      "text": "hi there",
+      "label": "greeting"
+    },
+    {
+      "text": "hey",
+      "label": "greeting"
+    },
+    {
+      "text": "good morning",
+      "label": "greeting"
+    },
+    {
+      "text": "good afternoon",
+      "label": "greeting"
+    },
+    {
+      "text": "good evening",
+      "label": "greeting"
+    },
+    {
+      "text": "namaste",
+      "label": "greeting"
+    },
+    {
+      "text": "hi how are you",
+      "label": "greeting"
+    },
+    {
+      "text": "hello there",
+      "label": "greeting"
+    },
+    {
+      "text": "greetings",
+      "label": "greeting"
+    },
+    {
+      "text": "what's up",
+      "label": "greeting"
+    },
+    {
+      "text": "howdy",
+      "label": "greeting"
+    },
+    {
+      "text": "hi bot",
+      "label": "greeting"
+    },
+    {
+      "text": "hello bot",
+      "label": "greeting"
+    },
+    {
+      "text": "hey there",
+      "label": "greeting"
+    },
+    {
+      "text": "hi good morning",
+      "label": "greeting"
+    },
+    {
+      "text": "hello good evening",
+      "label": "greeting"
+    },
+    {
+      "text": "hey buddy",
+      "label": "greeting"
+    },
+    {
+      "text": "hi friend",
+      "label": "greeting"
+    },
+    {
+      "text": "hello friend",
+      "label": "greeting"
+    },
+    {
+      "text": "hey hi",
+      "label": "greeting"
+    },
+    {
+      "text": "hii",
+      "label": "greeting"
+    },
+    {
+      "text": "helo",
+      "label": "greeting"
+    },
+    {
+      "text": "heya",
+      "label": "greeting"
+    },
+    {
+      "text": "yo",
+      "label": "greeting"
+    },
+    {
+      "text": "morning",
+      "label": "greeting"
+    },
+    {
+      "text": "evening",
+      "label": "greeting"
+    },
+    {
+      "text": "afternoon",
+      "label": "greeting"
+    },
+    {
+      "text": "kaise ho",
+      "label": "greeting"
+    },
+    {
+      "text": "kya haal hai",
+      "label": "greeting"
+    },
+    {
+      "text": "helloo",
+      "label": "greeting"
+    },
+    {
+      "text": "heyy",
+      "label": "greeting"
+    },
+    {
+      "text": "hey good afternoon",
+      "label": "greeting"
+    },
+    {
+      "text": "sup",
+      "label": "greeting"
+    },
+    {
+      "text": "wassup",
+      "label": "greeting"
+    },
+    {
+      "text": "hey wassup",
+      "label": "greeting"
+    },
+    {
+      "text": "namaste ji",
+      "label": "greeting"
+    },
+    {
+      "text": "hello namaste",
+      "label": "greeting"
+    },
+    {
+      "text": "hi kaise ho",
+      "label": "greeting"
+    },
+    {
+      "text": "hello kya hal hai",
+      "label": "greeting"
+    },
+    {
+      "text": "hey bhai",
+      "label": "greeting"
+    },
+    {
+      "text": "hello dost",
+      "label": "greeting"
+    },
+    {
+      "text": "namashkar",
+      "label": "greeting"
+    },
+    {
+      "text": "pranam",
+      "label": "greeting"
+    },
+    {
+      "text": "jai hind",
+      "label": "greeting"
+    },
+    {
+      "text": "hello sir",
+      "label": "greeting"
+    },
+    {
+      "text": "hi mam",
+      "label": "greeting"
+    },
+    {
+      "text": "greetings sir",
+      "label": "greeting"
+    },
+    {
+      "text": "good day",
+      "label": "greeting"
+    },
+    {
+      "text": "top of the morning",
+      "label": "greeting"
+    },
+    {
+      "text": "how are you",
+      "label": "greeting"
+    },
+    {
+      "text": "how are you doing",
+      "label": "greeting"
+    },
+    {
+      "text": "how have you been",
+      "label": "greeting"
+    },
+    {
+      "text": "hows it going",
+      "label": "greeting"
+    },
+    {
+      "text": "whats new",
+      "label": "greeting"
+    },
+    {
+      "text": "how r u",
+      "label": "greeting"
+    },
+    {
+      "text": "vanakkam",
+      "label": "greeting"
+    },
+    {
+      "text": "sat sri akal",
+      "label": "greeting"
+    },
+    {
+      "text": "salaam",
+      "label": "greeting"
+    },
+    {
+      "text": "adaab",
+      "label": "greeting"
+    },
+    {
+      "text": "hiiii",
+      "label": "greeting"
+    },
+    {
+      "text": "heyyy",
+      "label": "greeting"
+    },
+    {
+      "text": "yooo",
+      "label": "greeting"
+    },
+    {
+      "text": "ayy",
+      "label": "greeting"
+    },
+    {
+      "text": "ayo",
+      "label": "greeting"
+    },
+    {
+      "text": "hi there bot",
+      "label": "greeting"
+    },
+    {
+      "text": "hello friend how are you",
+      "label": "greeting"
+    },
+    {
+      "text": "hey whats up",
+      "label": "greeting"
+    },
+    {
+      "text": "good morning sir",
+      "label": "greeting"
+    },
+    {
+      "text": "good evening mam",
+      "label": "greeting"
+    },
+    {
+      "text": "namaste dost",
+      "label": "greeting"
+    },
+    {
+      "text": "hello ji",
+      "label": "greeting"
+    },
+    {
+      "text": "hi bhai kaise ho",
+      "label": "greeting"
+    },
+    {
+      "text": "hey buddy wassup",
+      "label": "greeting"
+    },
+    {
+      "text": "greetings friend",
+      "label": "greeting"
+    },
+    {
+      "text": "hello how are you doing",
+      "label": "greeting"
+    },
+    {
+      "text": "hi kya chal raha hai",
+      "label": "greeting"
+    },
+    {
+      "text": "hey there friend",
+      "label": "greeting"
+    },
+    {
+      "text": "good afternoon sir",
+      "label": "greeting"
+    },
+    {
+      "text": "morning friend",
+      "label": "greeting"
+    },
+    {
+      "text": "evening sir",
+      "label": "greeting"
+    },
+    {
+      "text": "yo wassup",
+      "label": "greeting"
+    },
+    {
+      "text": "hiya",
+      "label": "greeting"
+    },
+    {
+      "text": "hello everyone",
+      "label": "greeting"
+    },
+    {
+      "text": "hi all",
+      "label": "greeting"
+    },
+    {
+      "text": "hey everyone",
+      "label": "greeting"
+    },
+    {
+      "text": "greetings everyone",
+      "label": "greeting"
+    },
+    {
+      "text": "good morning everyone",
+      "label": "greeting"
+    },
+    {
+      "text": "hello team",
+      "label": "greeting"
+    },
+    {
+      "text": "hi team",
+      "label": "greeting"
+    },
+    {
+      "text": "hey team",
+      "label": "greeting"
+    },
+    {
+      "text": "namaste everyone",
+      "label": "greeting"
+    },
+    {
+      "text": "bye",
+      "label": "farewell"
+    },
+    {
+      "text": "goodbye",
+      "label": "farewell"
+    },
+    {
+      "text": "see you",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks bye",
+      "label": "farewell"
+    },
+    {
+      "text": "thank you goodbye",
+      "label": "farewell"
+    },
+    {
+      "text": "see you later",
+      "label": "farewell"
+    },
+    {
+      "text": "take care",
+      "label": "farewell"
+    },
+    {
+      "text": "bye bye",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks for your help",
+      "label": "farewell"
+    },
+    {
+      "text": "thank you so much",
+      "label": "farewell"
+    },
+    {
+      "text": "that's all thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "ok bye",
+      "label": "farewell"
+    },
+    {
+      "text": "got it thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "perfect thank you",
+      "label": "farewell"
+    },
+    {
+      "text": "great thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks a lot",
+      "label": "farewell"
+    },
+    {
+      "text": "thank you very much",
+      "label": "farewell"
+    },
+    {
+      "text": "thats all for now",
+      "label": "farewell"
+    },
+    {
+      "text": "i am done",
+      "label": "farewell"
+    },
+    {
+      "text": "no more questions",
+      "label": "farewell"
+    },
+    {
+      "text": "okay thanks bye",
+      "label": "farewell"
+    },
+    {
+      "text": "alright thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "ok thank you",
+      "label": "farewell"
+    },
+    {
+      "text": "nice talking to you",
+      "label": "farewell"
+    },
+    {
+      "text": "goodbye and thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "see ya",
+      "label": "farewell"
+    },
+    {
+      "text": "later",
+      "label": "farewell"
+    },
+    {
+      "text": "cheers",
+      "label": "farewell"
+    },
+    {
+      "text": "cya",
+      "label": "farewell"
+    },
+    {
+      "text": "tata",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "thank you",
+      "label": "farewell"
+    },
+    {
+      "text": "got it bye",
+      "label": "farewell"
+    },
+    {
+      "text": "understood thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "ok got it",
+      "label": "farewell"
+    },
+    {
+      "text": "perfect bye",
+      "label": "farewell"
+    },
+    {
+      "text": "dhanyavad",
+      "label": "farewell"
+    },
+    {
+      "text": "shukriya",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks bye bhai",
+      "label": "farewell"
+    },
+    {
+      "text": "ok bye dost",
+      "label": "farewell"
+    },
+    {
+      "text": "theek hai thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "achha bye",
+      "label": "farewell"
+    },
+    {
+      "text": "milte hai",
+      "label": "farewell"
+    },
+    {
+      "text": "phir milenge",
+      "label": "farewell"
+    },
+    {
+      "text": "baad me baat karte hai",
+      "label": "farewell"
+    },
+    {
+      "text": "gotta go",
+      "label": "farewell"
+    },
+    {
+      "text": "gtg",
+      "label": "farewell"
+    },
+    {
+      "text": "catch you later",
+      "label": "farewell"
+    },
+    {
+      "text": "peace out",
+      "label": "farewell"
+    },
+    {
+      "text": "im out",
+      "label": "farewell"
+    },
+    {
+      "text": "see ya soon",
+      "label": "farewell"
+    },
+    {
+      "text": "talk later",
+      "label": "farewell"
+    },
+    {
+      "text": "ttyl",
+      "label": "farewell"
+    },
+    {
+      "text": "later gator",
+      "label": "farewell"
+    },
+    {
+      "text": "thats helpful thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "appreciate it",
+      "label": "farewell"
+    },
+    {
+      "text": "you helped a lot",
+      "label": "farewell"
+    },
+    {
+      "text": "got my answer thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "that clarifies it",
+      "label": "farewell"
+    },
+    {
+      "text": "all clear now",
+      "label": "farewell"
+    },
+    {
+      "text": "no more doubts",
+      "label": "farewell"
+    },
+    {
+      "text": "i am satisfied",
+      "label": "farewell"
+    },
+    {
+      "text": "perfect explanation",
+      "label": "farewell"
+    },
+    {
+      "text": "thnks",
+      "label": "farewell"
+    },
+    {
+      "text": "thx",
+      "label": "farewell"
+    },
+    {
+      "text": "ty",
+      "label": "farewell"
+    },
+    {
+      "text": "k bye",
+      "label": "farewell"
+    },
+    {
+      "text": "kk thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "byee",
+      "label": "farewell"
+    },
+    {
+      "text": "byeee",
+      "label": "farewell"
+    },
+    {
+      "text": "thank you bye",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks see you",
+      "label": "farewell"
+    },
+    {
+      "text": "ok thanks bye",
+      "label": "farewell"
+    },
+    {
+      "text": "alright bye",
+      "label": "farewell"
+    },
+    {
+      "text": "got it thank you",
+      "label": "farewell"
+    },
+    {
+      "text": "understood bye",
+      "label": "farewell"
+    },
+    {
+      "text": "clear thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "okay goodbye",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks for everything",
+      "label": "farewell"
+    },
+    {
+      "text": "appreciate your help",
+      "label": "farewell"
+    },
+    {
+      "text": "you are helpful",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks a ton",
+      "label": "farewell"
+    },
+    {
+      "text": "thank you sir",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks mam",
+      "label": "farewell"
+    },
+    {
+      "text": "ok bye sir",
+      "label": "farewell"
+    },
+    {
+      "text": "thanks and bye",
+      "label": "farewell"
+    },
+    {
+      "text": "cool thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "awesome thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "nice thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "okay thats it",
+      "label": "farewell"
+    },
+    {
+      "text": "im good thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "sufficient thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "enough info thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "perfect got it",
+      "label": "farewell"
+    },
+    {
+      "text": "excellent thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "wonderful bye",
+      "label": "farewell"
+    },
+    {
+      "text": "great bye",
+      "label": "farewell"
+    },
+    {
+      "text": "thats enough thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "satisfied bye",
+      "label": "farewell"
+    },
+    {
+      "text": "done thanks",
+      "label": "farewell"
+    },
+    {
+      "text": "complete bye",
+      "label": "farewell"
+    },
+    {
+      "text": "how to become a software engineer",
+      "label": "career_query"
+    },
+    {
+      "text": "what is data science career",
+      "label": "career_query"
+    },
+    {
+      "text": "how can i become a doctor",
+      "label": "career_query"
+    },
+    {
+      "text": "tell me about engineering career",
+      "label": "career_query"
+    },
+    {
+      "text": "what are career options after 12th",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become an IAS officer",
+      "label": "career_query"
+    },
+    {
+      "text": "career in machine learning",
+      "label": "career_query"
+    },
+    {
+      "text": "what is the salary of a data scientist",
+      "label": "career_query"
+    },
+    {
+      "text": "how to get into finance career",
+      "label": "career_query"
+    },
+    {
+      "text": "what skills do i need for AI career",
+      "label": "career_query"
+    },
+    {
+      "text": "career path for web developer",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become a CA",
+      "label": "career_query"
+    },
+    {
+      "text": "what is the future of AI jobs",
+      "label": "career_query"
+    },
+    {
+      "text": "career options in commerce",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become a pilot",
+      "label": "career_query"
+    },
+    {
+      "text": "what does a product manager do",
+      "label": "career_query"
+    },
+    {
+      "text": "career in cyber security",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become a lawyer",
+      "label": "career_query"
+    },
+    {
+      "text": "what is the scope of biotechnology",
+      "label": "career_query"
+    },
+    {
+      "text": "career opportunities in healthcare",
+      "label": "career_query"
+    },
+    {
+      "text": "how to get job at google",
+      "label": "career_query"
+    },
+    {
+      "text": "what after 12th science",
+      "label": "career_query"
+    },
+    {
+      "text": "career options after btech",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become ml engineer",
+      "label": "career_query"
+    },
+    {
+      "text": "what is devops career",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become a teacher",
+      "label": "career_query"
+    },
+    {
+      "text": "career in banking sector",
+      "label": "career_query"
+    },
+    {
+      "text": "how to join indian army",
+      "label": "career_query"
+    },
+    {
+      "text": "what is the salary of software developer",
+      "label": "career_query"
+    },
+    {
+      "text": "career growth in IT industry",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become a chef",
+      "label": "career_query"
+    },
+    {
+      "text": "career in journalism",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become an entrepreneur",
+      "label": "career_query"
+    },
+    {
+      "text": "jobs after mba",
+      "label": "career_query"
+    },
+    {
+      "text": "what is the scope of mechanical engineering",
+      "label": "career_query"
+    },
+    {
+      "text": "career in government sector",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become a fashion designer",
+      "label": "career_query"
+    },
+    {
+      "text": "career in film industry",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become an architect",
+      "label": "career_query"
+    },
+    {
+      "text": "what is the future of programming",
+      "label": "career_query"
+    },
+    {
+      "text": "career options for science students",
+      "label": "career_query"
+    },
+    {
+      "text": "how to get into consulting",
+      "label": "career_query"
+    },
+    {
+      "text": "career in artificial intelligence",
+      "label": "career_query"
+    },
+    {
+      "text": "what are the highest paying jobs",
+      "label": "career_query"
+    },
+    {
+      "text": "career after graduation",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become a psychologist",
+      "label": "career_query"
+    },
+    {
+      "text": "career in event management",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become a scientist",
+      "label": "career_query"
+    },
+    {
+      "text": "job opportunities in india",
+      "label": "career_query"
+    },
+    {
+      "text": "career guidance for students",
+      "label": "career_query"
+    },
+    {
+      "text": "what career is best for me",
+      "label": "career_query"
+    },
+    {
+      "text": "how to switch career",
+      "label": "career_query"
+    },
+    {
+      "text": "career in civil services",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become full stack developer",
+      "label": "career_query"
+    },
+    {
+      "text": "what is the salary of ca",
+      "label": "career_query"
+    },
+    {
+      "text": "career after 10th",
+      "label": "career_query"
+    },
+    {
+      "text": "future of data science",
+      "label": "career_query"
+    },
+    {
+      "text": "what skills needed for it career",
+      "label": "career_query"
+    },
+    {
+      "text": "career in sports",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become ias",
+      "label": "career_query"
+    },
+    {
+      "text": "what after graduation",
+      "label": "career_query"
+    },
+    {
+      "text": "career opportunities abroad",
+      "label": "career_query"
+    },
+    {
+      "text": "engineer kaise bane",
+      "label": "career_query"
+    },
+    {
+      "text": "doctor banne ke liye kya kare",
+      "label": "career_query"
+    },
+    {
+      "text": "software developer kaise banu",
+      "label": "career_query"
+    },
+    {
+      "text": "data scientist ban sakta hu kya",
+      "label": "career_query"
+    },
+    {
+      "text": "pilot banna hai",
+      "label": "career_query"
+    },
+    {
+      "text": "ias officer kaise bane",
+      "label": "career_query"
+    },
+    {
+      "text": "teacher banana hai",
+      "label": "career_query"
+    },
+    {
+      "text": "ca kaise kare",
+      "label": "career_query"
+    },
+    {
+      "text": "lawyer banne ka tarika",
+      "label": "career_query"
+    },
+    {
+      "text": "architect career ke bare me batao",
+      "label": "career_query"
+    },
+    {
+      "text": "how to become blockchain developer",
+      "label": "career_query"
+    },
+    {
+      "text": "career in cloud computing",
+      "label": "career_query"
+    },
+    {
+      "text": "ethical hacker kaise bane",
+      "label": "career_query"
+    },
+    {
+      "text": "game developer career path",
+      "label": "career_query"
+    },
+    {
+      "text": "ui ux designer scope",
+      "label": "career_query"
+    },
+    {
+      "text": "digital marketing career",
+      "label": "career_query"
+    },
+    {
+      "text": "content creator kaise bane",
+      "label": "career_query"
+    },
+    {
+      "text": "youtuber career options",
+      "label": "career_query"
+    },
+    {
+      "text": "backend developer vs frontend developer",
+      "label": "career_query"
+    },
+    {
+      "text": "mobile app developer salary",
+      "label": "career_query"
+    },
+    {
+      "text": "devops engineer job opportunities",
+      "label": "career_query"
+    },
+    {
+      "text": "business analyst career growth",
+      "label": "career_query"
+    },
+    {
+      "text": "product manager skills needed",
+      "label": "career_query"
+    },
+    {
+      "text": "scrum master career",
+      "label": "career_query"
+    },
+    {
+      "text": "coding me career hai kya",
+      "label": "career_query"
+    },
+    {
+      "text": "government job options",
+      "label": "career_query"
+    },
+    {
+      "text": "private sector vs government",
+      "label": "career_query"
+    },
+    {
+      "text": "startup me job kaisa hai",
+      "label": "career_query"
+    },
+    {
+      "text": "freelancing career",
+      "label": "career_query"
+    },
+    {
+      "text": "work from home jobs",
+      "label": "career_query"
+    },
+    {
+      "text": "graphic designer career",
+      "label": "career_query"
+    },
+    {
+      "text": "animator kaise bane",
+      "label": "career_query"
+    },
+    {
+      "text": "photographer career options",
+      "label": "career_query"
+    },
+    {
+      "text": "chartered accountant salary",
+      "label": "career_query"
+    },
+    {
+      "text": "stock market career",
+      "label": "career_query"
+    },
+    {
+      "text": "investment banker kaise bane",
+      "label": "career_query"
+    },
+    {
+      "text": "civil engineer scope",
+      "label": "career_query"
+    },
+    {
+      "text": "best engineering colleges in india",
+      "label": "college_query"
+    },
+    {
+      "text": "top IITs ranking",
+      "label": "college_query"
+    },
+    {
+      "text": "how to get admission in IIT",
+      "label": "college_query"
+    },
+    {
+      "text": "best colleges for computer science",
+      "label": "college_query"
+    },
+    {
+      "text": "NIT vs IIT which is better",
+      "label": "college_query"
+    },
+    {
+      "text": "colleges accepting JEE mains score",
+      "label": "college_query"
+    },
+    {
+      "text": "best medical colleges in india",
+      "label": "college_query"
+    },
+    {
+      "text": "AIIMS admission process",
+      "label": "college_query"
+    },
+    {
+      "text": "top MBA colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "IIM admission criteria",
+      "label": "college_query"
+    },
+    {
+      "text": "best law colleges in india",
+      "label": "college_query"
+    },
+    {
+      "text": "BITS pilani admission",
+      "label": "college_query"
+    },
+    {
+      "text": "top private engineering colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "colleges in bangalore for engineering",
+      "label": "college_query"
+    },
+    {
+      "text": "best colleges for data science",
+      "label": "college_query"
+    },
+    {
+      "text": "NLU admission process",
+      "label": "college_query"
+    },
+    {
+      "text": "top colleges for BCA",
+      "label": "college_query"
+    },
+    {
+      "text": "DTU vs NSIT comparison",
+      "label": "college_query"
+    },
+    {
+      "text": "fees structure of IIT bombay",
+      "label": "college_query"
+    },
+    {
+      "text": "placement statistics of IIT delhi",
+      "label": "college_query"
+    },
+    {
+      "text": "best colleges for btech cse",
+      "label": "college_query"
+    },
+    {
+      "text": "top universities in india",
+      "label": "college_query"
+    },
+    {
+      "text": "iit bombay admission",
+      "label": "college_query"
+    },
+    {
+      "text": "best government colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "colleges with best placements",
+      "label": "college_query"
+    },
+    {
+      "text": "admission in delhi university",
+      "label": "college_query"
+    },
+    {
+      "text": "best commerce colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "vit ranking",
+      "label": "college_query"
+    },
+    {
+      "text": "srm university admission",
+      "label": "college_query"
+    },
+    {
+      "text": "manipal college fees",
+      "label": "college_query"
+    },
+    {
+      "text": "best nit for cse",
+      "label": "college_query"
+    },
+    {
+      "text": "iit madras vs iit bombay",
+      "label": "college_query"
+    },
+    {
+      "text": "college review for engineering",
+      "label": "college_query"
+    },
+    {
+      "text": "best colleges near me",
+      "label": "college_query"
+    },
+    {
+      "text": "top 10 iits in india",
+      "label": "college_query"
+    },
+    {
+      "text": "nirma university admission",
+      "label": "college_query"
+    },
+    {
+      "text": "amity university fees",
+      "label": "college_query"
+    },
+    {
+      "text": "jadavpur university ranking",
+      "label": "college_query"
+    },
+    {
+      "text": "best colleges in mumbai",
+      "label": "college_query"
+    },
+    {
+      "text": "iit delhi cutoff",
+      "label": "college_query"
+    },
+    {
+      "text": "best college for mba in india",
+      "label": "college_query"
+    },
+    {
+      "text": "lpu admission",
+      "label": "college_query"
+    },
+    {
+      "text": "jnu admission process",
+      "label": "college_query"
+    },
+    {
+      "text": "best colleges for bsc",
+      "label": "college_query"
+    },
+    {
+      "text": "iit kharagpur review",
+      "label": "college_query"
+    },
+    {
+      "text": "best engineering college kaun sa hai",
+      "label": "college_query"
+    },
+    {
+      "text": "iit me admission kaise ho",
+      "label": "college_query"
+    },
+    {
+      "text": "nit aur iit me difference",
+      "label": "college_query"
+    },
+    {
+      "text": "delhi university me kaise jaye",
+      "label": "college_query"
+    },
+    {
+      "text": "mere paas best college kaun sa hai",
+      "label": "college_query"
+    },
+    {
+      "text": "government college fees kitni hai",
+      "label": "college_query"
+    },
+    {
+      "text": "private college acha hai kya",
+      "label": "college_query"
+    },
+    {
+      "text": "bits pilani review",
+      "label": "college_query"
+    },
+    {
+      "text": "vit university kaisa hai",
+      "label": "college_query"
+    },
+    {
+      "text": "manipal college placements",
+      "label": "college_query"
+    },
+    {
+      "text": "best colleges in mumbai for engineering",
+      "label": "college_query"
+    },
+    {
+      "text": "bangalore me top colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "hyderabad engineering colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "pune me best colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "delhi ncr colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "kolkata medical colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "chennai top universities",
+      "label": "college_query"
+    },
+    {
+      "text": "ahmedabad colleges for commerce",
+      "label": "college_query"
+    },
+    {
+      "text": "iit bombay cse cutoff",
+      "label": "college_query"
+    },
+    {
+      "text": "nit trichy placements",
+      "label": "college_query"
+    },
+    {
+      "text": "du admission procedure",
+      "label": "college_query"
+    },
+    {
+      "text": "aiims fees structure",
+      "label": "college_query"
+    },
+    {
+      "text": "iim admission criteria",
+      "label": "college_query"
+    },
+    {
+      "text": "nlsiu bangalore cutoff",
+      "label": "college_query"
+    },
+    {
+      "text": "iiit hyderabad ranking",
+      "label": "college_query"
+    },
+    {
+      "text": "dtu vs nsit comparison",
+      "label": "college_query"
+    },
+    {
+      "text": "jnu entrance exam",
+      "label": "college_query"
+    },
+    {
+      "text": "bhu admission date",
+      "label": "college_query"
+    },
+    {
+      "text": "nit vs iiit which is better",
+      "label": "college_query"
+    },
+    {
+      "text": "government college vs private",
+      "label": "college_query"
+    },
+    {
+      "text": "tier 1 vs tier 2 colleges",
+      "label": "college_query"
+    },
+    {
+      "text": "old iit vs new iit",
+      "label": "college_query"
+    },
+    {
+      "text": "top colleges for mca",
+      "label": "college_query"
+    },
+    {
+      "text": "anna university ranking",
+      "label": "college_query"
+    },
+    {
+      "text": "pec chandigarh admission",
+      "label": "college_query"
+    },
+    {
+      "text": "thapar university fees",
+      "label": "college_query"
+    },
+    {
+      "text": "coep pune cutoff",
+      "label": "college_query"
+    },
+    {
+      "text": "vjti mumbai admission",
+      "label": "college_query"
+    },
+    {
+      "text": "rvce bangalore placements",
+      "label": "college_query"
+    },
+    {
+      "text": "msrit bangalore ranking",
+      "label": "college_query"
+    },
+    {
+      "text": "psg tech coimbatore review",
+      "label": "college_query"
+    },
+    {
+      "text": "nit warangal cse cutoff",
+      "label": "college_query"
+    },
+    {
+      "text": "iit kanpur placement",
+      "label": "college_query"
+    },
+    {
+      "text": "iit roorkee fees",
+      "label": "college_query"
+    },
+    {
+      "text": "iit guwahati ranking",
+      "label": "college_query"
+    },
+    {
+      "text": "iit bhu review",
+      "label": "college_query"
+    },
+    {
+      "text": "daiict gandhinagar admission",
+      "label": "college_query"
+    },
+    {
+      "text": "iiitdm jabalpur cutoff",
+      "label": "college_query"
+    },
+    {
+      "text": "nit surathkal placements",
+      "label": "college_query"
+    },
+    {
+      "text": "nit calicut ranking",
+      "label": "college_query"
+    },
+    {
+      "text": "iit indore admission",
+      "label": "college_query"
+    },
+    {
+      "text": "iit patna review",
+      "label": "college_query"
+    },
+    {
+      "text": "create a roadmap for me",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "give me a career path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "how to plan my career",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "make a roadmap to become data scientist",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "step by step guide to become engineer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "career roadmap for software developer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "plan my journey to IIT",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "what steps should i follow to become doctor",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "roadmap to become ml engineer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "career plan for next 5 years",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "guide me to become a CA",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "what should i do after 10th to become engineer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "create study plan for jee",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "roadmap to crack upsc",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "path to become data analyst",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "create a learning plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "make my career roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "step by step to become doctor",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "plan for becoming software engineer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "give me steps to follow",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "how to reach my goal career",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "create path for ias",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "roadmap for mbbs",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "career path planning",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "guide me step by step",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "what are the steps for iit",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "make a plan for my career",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "create roadmap for web developer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "plan to become pilot",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "steps to become architect",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "roadmap for mba preparation",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "create study roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "plan my future career",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "guide me to become engineer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "what path should i take",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "mujhe engineer banna hai kya karu",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "doctor banne ka pura plan batao",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "software developer kaise banu step by step",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "ias ki taiyari kaise kare",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "ca banne ke liye kya steps hai",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "data scientist roadmap hindi me",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "pilot banne ka complete guide",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "lawyer kaise bane puri jankari",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "roadmap for machine learning engineer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "step by step guide to become data analyst",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "full stack developer learning path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "cyber security career roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "cloud engineer complete path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "devops roadmap from scratch",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "blockchain developer learning path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "game developer roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "jee preparation complete plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "neet exam roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "upsc preparation strategy",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "cat exam study plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "gate preparation roadmap for cse",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "iit preparation from class 11",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "how to reach google as software engineer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "plan to get into iit",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "steps to crack microsoft interview",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "path to become iim graduate",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "complete plan for aiims admission",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "6 month plan for data science",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "1 year roadmap to become developer",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "2 years plan for upsc",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "crash course plan for jee",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "frontend developer learning path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "backend developer roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "mobile app developer plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "ui ux designer learning path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "digital marketing roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "content writer career plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "graphic designer learning path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "ethical hacker roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "penetration tester path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "network engineer learning plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "database administrator roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "business analyst career path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "product manager roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "project manager learning path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "hr career roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "finance career plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "investment banker roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "chartered accountant preparation",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "company secretary path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "civil services roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "ssc preparation plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "banking exam preparation roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "railway exam study plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "defence exam preparation",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "nda preparation roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "clat preparation complete plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "du llb preparation",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "mbbs roadmap after 12th",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "bds career path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "bams preparation plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "nursing career roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "pharmacy career path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "agriculture career plan",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "fashion designer learning path",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "interior designer roadmap",
+      "label": "roadmap_request"
+    },
+    {
+      "text": "what is JEE exam",
+      "label": "exam_query"
+    },
+    {
+      "text": "how to prepare for NEET",
+      "label": "exam_query"
+    },
+    {
+      "text": "JEE mains vs JEE advanced",
+      "label": "exam_query"
+    },
+    {
+      "text": "CAT exam syllabus",
+      "label": "exam_query"
+    },
+    {
+      "text": "GATE exam preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "when is JEE mains 2025",
+      "label": "exam_query"
+    },
+    {
+      "text": "UPSC exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "how to crack NEET in first attempt",
+      "label": "exam_query"
+    },
+    {
+      "text": "best books for JEE preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "CLAT exam eligibility",
+      "label": "exam_query"
+    },
+    {
+      "text": "BITSAT exam date",
+      "label": "exam_query"
+    },
+    {
+      "text": "GRE vs GMAT which is easier",
+      "label": "exam_query"
+    },
+    {
+      "text": "how to prepare for bank exams",
+      "label": "exam_query"
+    },
+    {
+      "text": "SSC CGL preparation strategy",
+      "label": "exam_query"
+    },
+    {
+      "text": "CTET exam details",
+      "label": "exam_query"
+    },
+    {
+      "text": "NDA exam eligibility",
+      "label": "exam_query"
+    },
+    {
+      "text": "CUET exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "how difficult is NEET",
+      "label": "exam_query"
+    },
+    {
+      "text": "jee advanced cutoff",
+      "label": "exam_query"
+    },
+    {
+      "text": "neet pg preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "jee mains exam date",
+      "label": "exam_query"
+    },
+    {
+      "text": "neet syllabus 2025",
+      "label": "exam_query"
+    },
+    {
+      "text": "cat exam date",
+      "label": "exam_query"
+    },
+    {
+      "text": "gate syllabus for cse",
+      "label": "exam_query"
+    },
+    {
+      "text": "upsc prelims preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "ssc exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "ibps po exam",
+      "label": "exam_query"
+    },
+    {
+      "text": "neet ug cutoff",
+      "label": "exam_query"
+    },
+    {
+      "text": "jee preparation tips",
+      "label": "exam_query"
+    },
+    {
+      "text": "how to score in neet",
+      "label": "exam_query"
+    },
+    {
+      "text": "best coaching for jee",
+      "label": "exam_query"
+    },
+    {
+      "text": "online preparation for gate",
+      "label": "exam_query"
+    },
+    {
+      "text": "clat preparation books",
+      "label": "exam_query"
+    },
+    {
+      "text": "xat exam date",
+      "label": "exam_query"
+    },
+    {
+      "text": "mat exam syllabus",
+      "label": "exam_query"
+    },
+    {
+      "text": "gre preparation online",
+      "label": "exam_query"
+    },
+    {
+      "text": "ielts exam preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "toefl vs ielts",
+      "label": "exam_query"
+    },
+    {
+      "text": "upsc mains preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "railway exam preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "jee mains kya hai",
+      "label": "exam_query"
+    },
+    {
+      "text": "neet exam ke bare me batao",
+      "label": "exam_query"
+    },
+    {
+      "text": "cat exam kaise hota hai",
+      "label": "exam_query"
+    },
+    {
+      "text": "gate exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "upsc kaise clear kare",
+      "label": "exam_query"
+    },
+    {
+      "text": "ssc cgl ki taiyari",
+      "label": "exam_query"
+    },
+    {
+      "text": "bank po exam preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "rrb exam details",
+      "label": "exam_query"
+    },
+    {
+      "text": "clat exam difficulty",
+      "label": "exam_query"
+    },
+    {
+      "text": "nda exam kaise crack kare",
+      "label": "exam_query"
+    },
+    {
+      "text": "cds exam preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "afcat exam details",
+      "label": "exam_query"
+    },
+    {
+      "text": "cuet exam syllabus",
+      "label": "exam_query"
+    },
+    {
+      "text": "jee advanced vs jee mains difference",
+      "label": "exam_query"
+    },
+    {
+      "text": "neet vs aiims which is tougher",
+      "label": "exam_query"
+    },
+    {
+      "text": "gate cse vs gate ece",
+      "label": "exam_query"
+    },
+    {
+      "text": "cat vs xat vs mat",
+      "label": "exam_query"
+    },
+    {
+      "text": "gmat exam fees",
+      "label": "exam_query"
+    },
+    {
+      "text": "gre exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "ielts vs pte",
+      "label": "exam_query"
+    },
+    {
+      "text": "toefl exam date",
+      "label": "exam_query"
+    },
+    {
+      "text": "sat exam preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "act vs sat",
+      "label": "exam_query"
+    },
+    {
+      "text": "mcat exam for indian students",
+      "label": "exam_query"
+    },
+    {
+      "text": "usmle exam details",
+      "label": "exam_query"
+    },
+    {
+      "text": "jee mains cutoff 2026",
+      "label": "exam_query"
+    },
+    {
+      "text": "neet cutoff for government college",
+      "label": "exam_query"
+    },
+    {
+      "text": "aiims cutoff 2026",
+      "label": "exam_query"
+    },
+    {
+      "text": "cat percentile vs score",
+      "label": "exam_query"
+    },
+    {
+      "text": "gate score validity",
+      "label": "exam_query"
+    },
+    {
+      "text": "upsc attempts limit",
+      "label": "exam_query"
+    },
+    {
+      "text": "ssc exam age limit",
+      "label": "exam_query"
+    },
+    {
+      "text": "ibps clerk vs ibps po",
+      "label": "exam_query"
+    },
+    {
+      "text": "sbi po exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "rrb ntpc syllabus",
+      "label": "exam_query"
+    },
+    {
+      "text": "rrb group d preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "delhi police constable exam",
+      "label": "exam_query"
+    },
+    {
+      "text": "upsc cse vs upsc ese",
+      "label": "exam_query"
+    },
+    {
+      "text": "ifs exam eligibility",
+      "label": "exam_query"
+    },
+    {
+      "text": "ias vs ips which is better",
+      "label": "exam_query"
+    },
+    {
+      "text": "neet exam fees",
+      "label": "exam_query"
+    },
+    {
+      "text": "jee mains application form",
+      "label": "exam_query"
+    },
+    {
+      "text": "gate exam fees",
+      "label": "exam_query"
+    },
+    {
+      "text": "cat exam fees",
+      "label": "exam_query"
+    },
+    {
+      "text": "clat exam fees",
+      "label": "exam_query"
+    },
+    {
+      "text": "nda medical test",
+      "label": "exam_query"
+    },
+    {
+      "text": "nda ssb interview",
+      "label": "exam_query"
+    },
+    {
+      "text": "cds written exam",
+      "label": "exam_query"
+    },
+    {
+      "text": "afcat flying branch",
+      "label": "exam_query"
+    },
+    {
+      "text": "nift entrance exam",
+      "label": "exam_query"
+    },
+    {
+      "text": "nid entrance exam",
+      "label": "exam_query"
+    },
+    {
+      "text": "uceed exam for iit",
+      "label": "exam_query"
+    },
+    {
+      "text": "ceed exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "iiser entrance exam",
+      "label": "exam_query"
+    },
+    {
+      "text": "kvpy exam details",
+      "label": "exam_query"
+    },
+    {
+      "text": "ntse exam syllabus",
+      "label": "exam_query"
+    },
+    {
+      "text": "olympiad exams list",
+      "label": "exam_query"
+    },
+    {
+      "text": "bitsat vs jee mains",
+      "label": "exam_query"
+    },
+    {
+      "text": "viteee exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "srmjeee exam date",
+      "label": "exam_query"
+    },
+    {
+      "text": "comedk exam syllabus",
+      "label": "exam_query"
+    },
+    {
+      "text": "mht cet preparation",
+      "label": "exam_query"
+    },
+    {
+      "text": "ts eamcet cutoff",
+      "label": "exam_query"
+    },
+    {
+      "text": "ap eamcet rank predictor",
+      "label": "exam_query"
+    },
+    {
+      "text": "wbjee exam pattern",
+      "label": "exam_query"
+    },
+    {
+      "text": "kcet exam syllabus",
+      "label": "exam_query"
+    },
+    {
+      "text": "what is btech degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "difference between btech and be",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is mba",
+      "label": "degree_query"
+    },
+    {
+      "text": "bca vs btech which is better",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is bsc course",
+      "label": "degree_query"
+    },
+    {
+      "text": "mtech vs ms which is better",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is mbbs degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "bcom vs bba comparison",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is llb course",
+      "label": "degree_query"
+    },
+    {
+      "text": "barch degree details",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is bds course",
+      "label": "degree_query"
+    },
+    {
+      "text": "mca course details",
+      "label": "degree_query"
+    },
+    {
+      "text": "bpharm vs mbbs",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is bba degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "difference between mtech and mba",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is diploma in engineering",
+      "label": "degree_query"
+    },
+    {
+      "text": "phd requirements",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is integrated mba",
+      "label": "degree_query"
+    },
+    {
+      "text": "bsc nursing course",
+      "label": "degree_query"
+    },
+    {
+      "text": "hotel management degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is bba llb course",
+      "label": "degree_query"
+    },
+    {
+      "text": "msc vs mba",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is bsc it",
+      "label": "degree_query"
+    },
+    {
+      "text": "difference between btech and bsc",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is ba course",
+      "label": "degree_query"
+    },
+    {
+      "text": "bcom honours course",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is bfa degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "bsc agriculture course",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is polytechnic",
+      "label": "degree_query"
+    },
+    {
+      "text": "iti vs diploma which is better",
+      "label": "degree_query"
+    },
+    {
+      "text": "bsc vs btech difference",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is bmm course",
+      "label": "degree_query"
+    },
+    {
+      "text": "bsc biotechnology details",
+      "label": "degree_query"
+    },
+    {
+      "text": "what is bed course",
+      "label": "degree_query"
+    },
+    {
+      "text": "difference between mba and pgdm",
+      "label": "degree_query"
+    },
+    {
+      "text": "btech kya hota hai",
+      "label": "degree_query"
+    },
+    {
+      "text": "mba degree ke bare me batao",
+      "label": "degree_query"
+    },
+    {
+      "text": "bca ka full form",
+      "label": "degree_query"
+    },
+    {
+      "text": "bsc course duration",
+      "label": "degree_query"
+    },
+    {
+      "text": "llb kaise kare",
+      "label": "degree_query"
+    },
+    {
+      "text": "mbbs me kya hota hai",
+      "label": "degree_query"
+    },
+    {
+      "text": "bcom ke baad kya kare",
+      "label": "degree_query"
+    },
+    {
+      "text": "bba vs bcom kaun better hai",
+      "label": "degree_query"
+    },
+    {
+      "text": "mtech vs phd",
+      "label": "degree_query"
+    },
+    {
+      "text": "diploma vs degree difference",
+      "label": "degree_query"
+    },
+    {
+      "text": "ba course subjects",
+      "label": "degree_query"
+    },
+    {
+      "text": "bsc vs ba which is better",
+      "label": "degree_query"
+    },
+    {
+      "text": "barch eligibility",
+      "label": "degree_query"
+    },
+    {
+      "text": "bds vs mbbs",
+      "label": "degree_query"
+    },
+    {
+      "text": "bpharm scope in india",
+      "label": "degree_query"
+    },
+    {
+      "text": "bed course eligibility",
+      "label": "degree_query"
+    },
+    {
+      "text": "bfa career options",
+      "label": "degree_query"
+    },
+    {
+      "text": "bjmc course details",
+      "label": "degree_query"
+    },
+    {
+      "text": "bvsc degree for veterinary",
+      "label": "degree_query"
+    },
+    {
+      "text": "bhms course details",
+      "label": "degree_query"
+    },
+    {
+      "text": "bams vs bhms difference",
+      "label": "degree_query"
+    },
+    {
+      "text": "bpt course for physiotherapy",
+      "label": "degree_query"
+    },
+    {
+      "text": "boptom course details",
+      "label": "degree_query"
+    },
+    {
+      "text": "fashion designing degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "interior design degree courses",
+      "label": "degree_query"
+    },
+    {
+      "text": "event management degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "mass communication degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "journalism degree courses",
+      "label": "degree_query"
+    },
+    {
+      "text": "animation degree details",
+      "label": "degree_query"
+    },
+    {
+      "text": "graphic design degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "integrated mtech vs btech",
+      "label": "degree_query"
+    },
+    {
+      "text": "dual degree program iit",
+      "label": "degree_query"
+    },
+    {
+      "text": "5 year integrated mba",
+      "label": "degree_query"
+    },
+    {
+      "text": "btech mtech dual degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "phd after mtech or job",
+      "label": "degree_query"
+    },
+    {
+      "text": "postdoc vs phd",
+      "label": "degree_query"
+    },
+    {
+      "text": "mphil vs phd",
+      "label": "degree_query"
+    },
+    {
+      "text": "diploma in engineering duration",
+      "label": "degree_query"
+    },
+    {
+      "text": "polytechnic courses list",
+      "label": "degree_query"
+    },
+    {
+      "text": "iti courses after 10th",
+      "label": "degree_query"
+    },
+    {
+      "text": "iti vs iit difference",
+      "label": "degree_query"
+    },
+    {
+      "text": "paramedical courses list",
+      "label": "degree_query"
+    },
+    {
+      "text": "dmlt course details",
+      "label": "degree_query"
+    },
+    {
+      "text": "bmlt course details",
+      "label": "degree_query"
+    },
+    {
+      "text": "radiology degree courses",
+      "label": "degree_query"
+    },
+    {
+      "text": "nursing degree bsc vs gnm",
+      "label": "degree_query"
+    },
+    {
+      "text": "anm vs gnm nursing",
+      "label": "degree_query"
+    },
+    {
+      "text": "msc nursing vs bsc nursing",
+      "label": "degree_query"
+    },
+    {
+      "text": "pharmacy degree types",
+      "label": "degree_query"
+    },
+    {
+      "text": "dpharm vs bpharm",
+      "label": "degree_query"
+    },
+    {
+      "text": "mpharm course details",
+      "label": "degree_query"
+    },
+    {
+      "text": "agriculture degree courses",
+      "label": "degree_query"
+    },
+    {
+      "text": "bsc agriculture vs btech agriculture",
+      "label": "degree_query"
+    },
+    {
+      "text": "fisheries science degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "forestry degree courses",
+      "label": "degree_query"
+    },
+    {
+      "text": "veterinary science degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "horticulture degree courses",
+      "label": "degree_query"
+    },
+    {
+      "text": "food technology degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "biotechnology bsc vs btech",
+      "label": "degree_query"
+    },
+    {
+      "text": "microbiology degree scope",
+      "label": "degree_query"
+    },
+    {
+      "text": "biochemistry degree career",
+      "label": "degree_query"
+    },
+    {
+      "text": "environmental science degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "geology degree courses",
+      "label": "degree_query"
+    },
+    {
+      "text": "economics honours degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "psychology honours degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "sociology degree career",
+      "label": "degree_query"
+    },
+    {
+      "text": "political science degree",
+      "label": "degree_query"
+    },
+    {
+      "text": "suggest me a career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "what career is best for me",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recommend me a field",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "which stream should i choose",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "what should i do after 12th",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest some career options",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "which field is best for future",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recommend courses for me",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "what suits me best",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "help me choose a career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "i am confused about career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "guide me to select stream",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "which branch should i take in engineering",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest best degree for me",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "i dont know what to do after school",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recommend a career path",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "what should i study",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest me something",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "help me decide my career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "which course is good for me",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recommend best field for me",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "i need career advice",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest career based on my interest",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "what option is best for me",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "guide me to choose course",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest best stream after 10th",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recommend good career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "which career should i pick",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest me courses after 12th",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "help me find my career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "what is the best choice for me",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "need help choosing career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest based on my skills",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recommend career for commerce student",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recommend career for science student",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "mujhe kya karna chahiye",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "best career option batao",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "mere liye kaunsa field acha hai",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "confused hu career me",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "science lena chahiye ya commerce",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "arts stream acha hai kya",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "engineering karu ya medical",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "job karu ya business",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "government job ya private job",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "mba karu ya job karu",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "which engineering branch has scope",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "cse vs ece which is better",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "mechanical vs civil engineering",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "it vs computer science difference",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recommend career for maths student",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "best career without maths",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "career options for biology students",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "career for arts students",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest field for creative person",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "career for introverts",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "best career for extroverts",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "high salary career options",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "low investment business ideas",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "career with work life balance",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "career options for girls",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "best career for boys",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "career without jee exam",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "career without neet exam",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "options other than engineering",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "what if i dont clear jee",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "backup career options",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "plan b after 12th",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest degree based on interest",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "which college should i choose",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "iit lena chahiye ya nit",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "government college vs private suggest",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest best state for education",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "abroad study vs india",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "study abroad or stay in india",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "mba in india or abroad",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "career in india vs abroad",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest startup ideas",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "business ideas for students",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "part time job options",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "side hustle ideas for students",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "freelancing vs full time job",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest online courses",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "best skill to learn now",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "future proof career options",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "recession proof jobs",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "ai proof careers",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "automation proof jobs",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "trending careers 2026",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "emerging career fields",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "non traditional careers",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "unconventional career paths",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "passion vs money which career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "stable career vs risky career",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest career with less competition",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "easy career options",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "difficult but rewarding careers",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "challenging career fields",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest based on 10th marks",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "suggest based on 12th percentage",
+      "label": "recommendation_request"
+    },
+    {
+      "text": "what is the weather today",
+      "label": "off_topic"
+    },
+    {
+      "text": "tell me a joke",
+      "label": "off_topic"
+    },
+    {
+      "text": "who is the prime minister of india",
+      "label": "off_topic"
+    },
+    {
+      "text": "play a song",
+      "label": "off_topic"
+    },
+    {
+      "text": "what time is it",
+      "label": "off_topic"
+    },
+    {
+      "text": "who won the cricket match",
+      "label": "off_topic"
+    },
+    {
+      "text": "tell me about virat kohli",
+      "label": "off_topic"
+    },
+    {
+      "text": "whats the latest movie",
+      "label": "off_topic"
+    },
+    {
+      "text": "order pizza for me",
+      "label": "off_topic"
+    },
+    {
+      "text": "book a cab",
+      "label": "off_topic"
+    },
+    {
+      "text": "how to make coffee",
+      "label": "off_topic"
+    },
+    {
+      "text": "best restaurants near me",
+      "label": "off_topic"
+    },
+    {
+      "text": "turn on the lights",
+      "label": "off_topic"
+    },
+    {
+      "text": "what is the capital of france",
+      "label": "off_topic"
+    },
+    {
+      "text": "translate hello to hindi",
+      "label": "off_topic"
+    },
+    {
+      "text": "who is sachin tendulkar",
+      "label": "off_topic"
+    },
+    {
+      "text": "stock price of reliance",
+      "label": "off_topic"
+    },
+    {
+      "text": "how to cook biryani",
+      "label": "off_topic"
+    },
+    {
+      "text": "best mobile phone under 20000",
+      "label": "off_topic"
+    },
+    {
+      "text": "write a poem for me",
+      "label": "off_topic"
+    },
+    {
+      "text": "what is happening in ukraine",
+      "label": "off_topic"
+    },
+    {
+      "text": "best songs of 2024",
+      "label": "off_topic"
+    },
+    {
+      "text": "who is elon musk",
+      "label": "off_topic"
+    },
+    {
+      "text": "latest news today",
+      "label": "off_topic"
+    },
+    {
+      "text": "best places to visit",
+      "label": "off_topic"
+    },
+    {
+      "text": "how to lose weight",
+      "label": "off_topic"
+    },
+    {
+      "text": "best gym exercises",
+      "label": "off_topic"
+    },
+    {
+      "text": "how to meditate",
+      "label": "off_topic"
+    },
+    {
+      "text": "best netflix series",
+      "label": "off_topic"
+    },
+    {
+      "text": "who is the richest person",
+      "label": "off_topic"
+    },
+    {
+      "text": "bitcoin price today",
+      "label": "off_topic"
+    },
+    {
+      "text": "best youtube channels",
+      "label": "off_topic"
+    },
+    {
+      "text": "how to make money online",
+      "label": "off_topic"
+    },
+    {
+      "text": "best games for pc",
+      "label": "off_topic"
+    },
+    {
+      "text": "recipe for pasta",
+      "label": "off_topic"
+    },
+    {
+      "text": "aaj ka mausam kaisa hai",
+      "label": "off_topic"
+    },
+    {
+      "text": "joke sunao",
+      "label": "off_topic"
+    },
+    {
+      "text": "modi ji ka phone number",
+      "label": "off_topic"
+    },
+    {
+      "text": "cricket score batao",
+      "label": "off_topic"
+    },
+    {
+      "text": "ipl me kaun jeeta",
+      "label": "off_topic"
+    },
+    {
+      "text": "latest bollywood movie",
+      "label": "off_topic"
+    },
+    {
+      "text": "shahrukh khan ki age",
+      "label": "off_topic"
+    },
+    {
+      "text": "salman khan ki film",
+      "label": "off_topic"
+    },
+    {
+      "text": "trending on twitter",
+      "label": "off_topic"
+    },
+    {
+      "text": "viral video dikha do",
+      "label": "off_topic"
+    },
+    {
+      "text": "tiktok download karo",
+      "label": "off_topic"
+    },
+    {
+      "text": "instagram reel banao",
+      "label": "off_topic"
+    },
+    {
+      "text": "facebook pe kaise post kare",
+      "label": "off_topic"
+    },
+    {
+      "text": "whatsapp status idea",
+      "label": "off_topic"
+    },
+    {
+      "text": "best phone under 15000",
+      "label": "off_topic"
+    },
+    {
+      "text": "samsung vs iphone",
+      "label": "off_topic"
+    },
+    {
+      "text": "oneplus phone review",
+      "label": "off_topic"
+    },
+    {
+      "text": "laptop kaunsa lu",
+      "label": "off_topic"
+    },
+    {
+      "text": "gaming laptop under 50000",
+      "label": "off_topic"
+    },
+    {
+      "text": "best headphones under 2000",
+      "label": "off_topic"
+    },
+    {
+      "text": "smartwatch under 5000",
+      "label": "off_topic"
+    },
+    {
+      "text": "tv kaunsa le",
+      "label": "off_topic"
+    },
+    {
+      "text": "best ac for room",
+      "label": "off_topic"
+    },
+    {
+      "text": "fridge price",
+      "label": "off_topic"
+    },
+    {
+      "text": "washing machine recommendation",
+      "label": "off_topic"
+    },
+    {
+      "text": "microwave oven price",
+      "label": "off_topic"
+    },
+    {
+      "text": "car price in india",
+      "label": "off_topic"
+    },
+    {
+      "text": "bike under 1 lakh",
+      "label": "off_topic"
+    },
+    {
+      "text": "petrol price today",
+      "label": "off_topic"
+    },
+    {
+      "text": "gold rate today",
+      "label": "off_topic"
+    },
+    {
+      "text": "silver price",
+      "label": "off_topic"
+    },
+    {
+      "text": "dollar to rupee rate",
+      "label": "off_topic"
+    },
+    {
+      "text": "sensex today",
+      "label": "off_topic"
+    },
+    {
+      "text": "nifty live",
+      "label": "off_topic"
+    },
+    {
+      "text": "mutual fund kya hai",
+      "label": "off_topic"
+    },
+    {
+      "text": "how to invest in stock market",
+      "label": "off_topic"
+    },
+    {
+      "text": "best credit card",
+      "label": "off_topic"
+    },
+    {
+      "text": "loan interest rate",
+      "label": "off_topic"
+    },
+    {
+      "text": "insurance policy best",
+      "label": "off_topic"
+    },
+    {
+      "text": "health insurance kaunsa le",
+      "label": "off_topic"
+    },
+    {
+      "text": "term insurance vs endowment",
+      "label": "off_topic"
+    },
+    {
+      "text": "pizza order online",
+      "label": "off_topic"
+    },
+    {
+      "text": "zomato vs swiggy",
+      "label": "off_topic"
+    },
+    {
+      "text": "best burger near me",
+      "label": "off_topic"
+    },
+    {
+      "text": "chinese food recipe",
+      "label": "off_topic"
+    },
+    {
+      "text": "south indian food",
+      "label": "off_topic"
+    },
+    {
+      "text": "punjabi dhaba near me",
+      "label": "off_topic"
+    },
+    {
+      "text": "gym near me",
+      "label": "off_topic"
+    },
+    {
+      "text": "yoga classes",
+      "label": "off_topic"
+    },
+    {
+      "text": "dance classes near me",
+      "label": "off_topic"
+    },
+    {
+      "text": "swimming pool near me",
+      "label": "off_topic"
+    },
+    {
+      "text": "cricket coaching",
+      "label": "off_topic"
+    },
+    {
+      "text": "football turf booking",
+      "label": "off_topic"
+    },
+    {
+      "text": "badminton court near me",
+      "label": "off_topic"
+    },
+    {
+      "text": "movie ticket booking",
+      "label": "off_topic"
+    },
+    {
+      "text": "pvr vs inox",
+      "label": "off_topic"
+    },
+    {
+      "text": "latest web series",
+      "label": "off_topic"
+    },
+    {
+      "text": "amazon prime shows",
+      "label": "off_topic"
+    },
+    {
+      "text": "hotstar subscription",
+      "label": "off_topic"
+    },
+    {
+      "text": "netflix free trial",
+      "label": "off_topic"
+    },
+    {
+      "text": "youtube premium worth it",
+      "label": "off_topic"
+    },
+    {
+      "text": "spotify vs gaana",
+      "label": "off_topic"
+    },
+    {
+      "text": "music download app",
+      "label": "off_topic"
+    },
+    {
+      "text": "video editing app",
+      "label": "off_topic"
+    },
+    {
+      "text": "photo editing free",
+      "label": "off_topic"
+    }
+  ]
+}

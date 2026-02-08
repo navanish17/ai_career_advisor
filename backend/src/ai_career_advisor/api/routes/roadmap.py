@@ -183,3 +183,85 @@ async def delete_roadmap_endpoint(
     
     return {"message": "Roadmap deleted successfully"}
 
+
+@router.post("/{roadmap_id}/share")
+async def share_roadmap(
+    roadmap_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Generate a public share link for a roadmap"""
+    import uuid
+    
+    # Get roadmap ensuring ownership
+    result = await db.execute(
+        select(Roadmap).where(
+            Roadmap.id == roadmap_id,
+            Roadmap.user_id == current_user.id
+        )
+    )
+    roadmap = result.scalars().first()
+    
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+    
+    # Generate token if not exists
+    if not roadmap.share_token:
+        roadmap.share_token = str(uuid.uuid4())
+        await db.commit()
+    
+    return {
+        "share_token": roadmap.share_token,
+        "message": "Public link generated"
+    }
+
+
+@router.get("/public/{share_token}")
+async def view_shared_roadmap(
+    share_token: str,
+    db: AsyncSession = Depends(get_db)
+):
+    """View a shared roadmap (Public access)"""
+    result = await db.execute(
+        select(Roadmap).where(Roadmap.share_token == share_token)
+    )
+    roadmap = result.scalars().first()
+    
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Shared roadmap not found")
+    
+    return {
+        "id": roadmap.id,
+        "name": roadmap.name,
+        "type": roadmap.roadmap_type,
+        "career_goal": roadmap.career_goal,
+        # Roadmap data is safe to share (no PII)
+        "roadmap_data": roadmap.roadmap_data, 
+        "created_at": roadmap.created_at.isoformat(),
+        "is_public": True
+    }
+
+
+@router.delete("/{roadmap_id}/share")
+async def unshare_roadmap(
+    roadmap_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Revoke public access to a roadmap"""
+    result = await db.execute(
+        select(Roadmap).where(
+            Roadmap.id == roadmap_id,
+            Roadmap.user_id == current_user.id
+        )
+    )
+    roadmap = result.scalars().first()
+    
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Roadmap not found")
+    
+    roadmap.share_token = None
+    await db.commit()
+    
+    return {"message": "Roadmap is no longer public"}
+

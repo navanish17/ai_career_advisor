@@ -6,10 +6,15 @@ from logging.config import fileConfig
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src'))
 sys.path.append(BASE_DIR)
 
+# Import Base from database - models use this Base
 from ai_career_advisor.core.database import Base
-import ai_career_advisor.models
-  # loads ALL models automatically
-  # IMPORT ALL MODELS
+
+# Import all models to ensure they're registered with Base.metadata
+from ai_career_advisor.models.user import User
+from ai_career_advisor.models.roadmap import SavedRoadmap
+from ai_career_advisor.models.user_preferences import UserPreferences
+from ai_career_advisor.models.career_attributes import CareerAttributes
+from ai_career_advisor.models.user_career_interaction import UserCareerInteraction
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context

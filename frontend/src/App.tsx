@@ -26,10 +26,14 @@ import ForwardPlanner from "./pages/roadmap/ForwardPlanner";
 import BackwardPlanner from "./pages/roadmap/BackwardPlanner";
 import MyRoadmaps from "./pages/roadmap/MyRoadmaps";
 import ViewRoadmap from "./pages/roadmap/ViewRoadmap";
+import SharedRoadmapView from "./pages/roadmap/SharedRoadmapView";
 
 // College Finder Pages
 import CollegeFinder from "./pages/college/collegefinder";
 import MyAlerts from "./pages/college/myalert";
+
+// Career Finder (Recommendations)
+import CareerFinder from "./pages/CareerFinder";
 
 const queryClient = new QueryClient();
 
@@ -55,7 +59,10 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+              {/* Public Roadmap View */}
+              <Route path="/roadmap/shared/:token" element={<SharedRoadmapView />} />
 
+              {/* Protected Routes */}
               {/* Protected Routes */}
               <Route
                 path="/"
@@ -156,6 +163,16 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <MyAlerts />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Career Finder Route */}
+              <Route
+                path="/career-finder"
+                element={
+                  <ProtectedRoute>
+                    <CareerFinder />
                   </ProtectedRoute>
                 }
               />

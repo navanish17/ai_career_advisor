@@ -12,6 +12,7 @@ class Roadmap(Base):
     roadmap_type = Column(String, nullable=False)
     
     name = Column(String, nullable=True)
+    share_token = Column(String, unique=True, index=True, nullable=True)
     career_goal = Column(String, nullable=True)
     roadmap_data = Column(JSON, nullable=True)
     

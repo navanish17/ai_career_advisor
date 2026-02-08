@@ -25,6 +25,8 @@ app.include_router(admission_alerts_router)
 app.include_router(backward_planner_router)
 app.include_router(career_insight)
 app.include_router(chatbot_router)
+app.include_router(intent_router, prefix="/api")
+app.include_router(recommendations_router, prefix="/api")
 
 @app.get('/health')
 async def health_check():

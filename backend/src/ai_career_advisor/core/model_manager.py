@@ -117,27 +117,28 @@ class ModelManager:
                 return response.text.strip()
                 
             except ResourceExhausted as e:
-                # Rate limited - try next model
+                # Rate limited - try next model (if auto-swapping is enabled, but here we specific model)
                 logger.warning(f"🔴 Rate limit hit on {selected_model}: {str(e)}")
                 cls.mark_model_rate_limited(selected_model)
                 
-                # Get next available model
+                # If specifically requested model failed, we stop here to let fallback logic handle it
+                if model:
+                     raise
+                
+                # Otherwise try next available from pool
                 selected_model = cls.get_available_gemini_model()
                 retry_count += 1
-                
-                # Wait before retry
                 await asyncio.sleep(2)
             
             except Exception as e:
                 logger.error(f"❌ Error with {selected_model}: {str(e)}")
                 retry_count += 1
-                
                 if retry_count < max_retries:
                     await asyncio.sleep(2)
                 else:
                     raise
         
-        raise Exception("All Gemini models exhausted")
+        raise Exception("Gemini generation failed after retries")
     
     @classmethod
     async def generate_with_perplexity(cls, prompt: str) -> str:
@@ -191,23 +192,98 @@ class ModelManager:
     @classmethod
     async def generate_smart(cls, prompt: str) -> str:
         """
-        Smart generation with full fallback chain:
-        1. Try Gemini 2.5 Flash (primary)
-        2. Try Gemini 2.5 Flash Lite (fallback)
-        3. Try Perplexity Sonar Pro (final fallback)
+        Smart generation with explicit fallback chain:
+        1. Gemini 2.5 Flash
+        2. Gemini 2.5 Flash-Lite
+        3. Perplexity Sonar-Pro
         """
+        # 1. Try Gemini 2.5 Flash
         try:
-            return await cls.generate_with_gemini(prompt)
-        except Exception as e:
-            logger.error(f"⚠️ Gemini failed: {str(e)}")
+            return await cls.generate_with_gemini(prompt, model="gemini-2.5-flash")
+        except Exception as e1:
+            logger.warning(f"⚠️ Gemini 2.5 Flash failed: {e1}. Trying Flash-Lite...")
             
+            # 2. Try Gemini 2.5 Flash-Lite
             try:
-                logger.info("🔄 Attempting Perplexity as fallback...")
-                return await cls.generate_with_perplexity(prompt)
+                return await cls.generate_with_gemini(prompt, model="gemini-2.5-flash-lite")
             except Exception as e2:
-                logger.error(f"❌ Perplexity also failed: {str(e2)}")
-                raise Exception(f"All AI providers failed. Gemini: {str(e)}, Perplexity: {str(e2)}")
+                logger.warning(f"⚠️ Gemini 2.5 Flash-Lite failed: {e2}. Switching to Perplexity...")
+                
+                # 3. Try Perplexity Sonar-Pro
+                try:
+                    return await cls.generate_with_perplexity(prompt)
+                except Exception as e3:
+                    logger.error(f"❌ All providers failed. Final error: {e3}")
+                    raise Exception(f"All models failed. Last error: {e3}")
     
+    @classmethod
+    async def generate(cls, prompt: str, preference: str = "auto") -> str:
+        """
+        Generate content based on user preference.
+        - "auto": Use smart fallback chain (Flash -> Lite -> Sonar)
+        - "sonar-pro": Use Perplexity
+        - "gemini-2.5-flash": Use specific Gemini model
+        """
+        if not preference or preference.lower() == "auto":
+            return await cls.generate_smart(prompt)
+        
+        elif preference.lower() == "sonar-pro":
+            try:
+                return await cls.generate_with_perplexity(prompt)
+            except Exception as e:
+                # If specific model requested fails, we DO NOT fallback
+                raise Exception(f"Perplexity Sonar-Pro failed: {str(e)}")
+        
+        elif "gemini" in preference.lower():
+            try:
+                # Extract model name if valid, otherwise default to flash
+                model_name = preference if preference in cls.GEMINI_MODELS else "gemini-2.5-flash"
+                return await cls.generate_with_gemini(prompt, model=model_name)
+            except Exception as e:
+                # If specific model requested fails, we DO NOT fallback
+                raise Exception(f"{model_name} failed: {str(e)}")
+        
+        else:
+            # Unknown preference default to smart
+            return await cls.generate_smart(prompt)
+    
+    @classmethod
+    async def get_embedding(cls, text: str) -> List[float]:
+        """
+        Get text embedding using Gemini's embedding model
+        """
+        max_retries = 3
+        retry_count = 0
+        
+        while retry_count < max_retries:
+            try:
+                api_key = cls.get_next_gemini_key()
+                if not api_key:
+                    raise ValueError("No Gemini API keys configured")
+                
+                genai.configure(api_key=api_key)
+                
+                # Using text-embedding-004 which is optimized for retrieval
+                loop = asyncio.get_event_loop()
+                result = await loop.run_in_executor(
+                    None,
+                    partial(
+                        genai.embed_content,
+                        model="models/text-embedding-004",
+                        content=text,
+                        task_type="retrieval_document"
+                    )
+                )
+                
+                return result['embedding']
+                
+            except Exception as e:
+                logger.error(f"❌ Embedding error (attempt {retry_count + 1}): {str(e)}")
+                retry_count += 1
+                await asyncio.sleep(1)
+        
+        raise Exception("Failed to get embedding after retries")
+
     @classmethod
     def reset_all_models(cls):
         """Reset all model statuses"""

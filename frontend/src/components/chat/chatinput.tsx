@@ -1,15 +1,24 @@
 import { useState, KeyboardEvent, useRef, useEffect } from 'react';
-import { Send, ChevronDown, Sparkles } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import ModelSelector, { ModelType } from './model-selector';
 
 interface ChatInputProps {
   onSend: (message: string) => void;
   isLoading: boolean;
   placeholder?: string;
+  selectedModel: ModelType;
+  onModelSelect: (model: ModelType) => void;
 }
 
-const ChatInput = ({ onSend, isLoading, placeholder = 'What can I help you build?' }: ChatInputProps) => {
+const ChatInput = ({
+  onSend,
+  isLoading,
+  placeholder = 'What can I help you build?',
+  selectedModel,
+  onModelSelect
+}: ChatInputProps) => {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -46,12 +55,13 @@ const ChatInput = ({ onSend, isLoading, placeholder = 'What can I help you build
         isLoading && "opacity-70 pointer-events-none"
       )}>
         {/* Model/Context Selector */}
+        {/* Model/Context Selector */}
         <div className="flex items-center gap-2 px-4 pt-3 pb-1">
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted border border-border text-[10px] font-medium text-muted-foreground uppercase tracking-tighter">
-            <Sparkles className="h-2.5 w-2.5 text-primary" />
-            AI Career Pilot v2
-            <ChevronDown className="h-2.5 w-2.5" />
-          </div>
+          <ModelSelector
+            selectedModel={selectedModel}
+            onSelect={onModelSelect}
+            isLoading={isLoading}
+          />
         </div>
 
         <div className="flex items-end gap-2 px-4 pb-2">

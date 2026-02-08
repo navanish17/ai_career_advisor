@@ -32,6 +32,13 @@ jobs:
           else
             echo "No tests found, skipping..."
           fi
+        env:
+          SMTP_HOST: "smtp.example.com"
+          SMTP_PORT: "587"
+          SMTP_USERNAME: "test_user"
+          SMTP_PASSWORD: "test_password"
+          SMTP_FROM_EMAIL: "test@example.com"
+          SMTP_FROM_NAME: "Test User"
 
       # Step 2: Push to Hugging Face (Only if verification passes)
       - name: Push to Hub

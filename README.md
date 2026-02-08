@@ -1,4 +1,15 @@
+---
+title: AI Career Advisor
+emoji: 🚀
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+app_port: 7860
+---
+
 # 🚀 AI Career Pilot
+#testing
 
 **AI Career Pilot** is an intelligent career guidance platform designed to help students make informed decisions about their academic and professional future. The platform leverages advanced AI technologies including RAG (Retrieval-Augmented Generation), natural language processing, and machine learning to provide personalized career recommendations, roadmaps, and college suggestions.
 

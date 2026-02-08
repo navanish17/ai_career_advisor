@@ -142,7 +142,7 @@ zipp==3.23.0
 
 # Phase 4: LangGraph Agentic Architecture
 langgraph==0.2.62
-langchain-core==0.3.29
+langchain-core==0.3.32
 langchain-google-genai==2.0.8
 langchain-community==0.3.16
 

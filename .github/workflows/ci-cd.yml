@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        lfs: false
     
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
@@ -39,6 +41,8 @@ jobs:
     if: github.event_name == 'push'
     steps:
     - uses: actions/checkout@v4
+      with:
+        lfs: false
     
     - name: Login to Docker Hub
       # This step requires DOCKER_USERNAME and DOCKER_PASSWORD secrets

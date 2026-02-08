@@ -150,3 +150,15 @@ langchain-community==0.3.16
 mlflow==2.11.1
 dagshub==0.3.18
 dvc==3.48.0
+
+# Production
+psycopg2-binary==2.9.9
+asyncpg==0.29.0
+gunicorn==21.2.0
+uvicorn[standard]==0.27.1
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.5
+
+

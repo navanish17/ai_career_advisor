@@ -206,3 +206,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Large/Binary Files (Excluded for Hugging Face)
+*.pptx
+*.db
+*.sqlite3
+bun.lockb
+backend/src/chroma_db/

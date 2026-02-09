@@ -1,8 +1,11 @@
 import google.generativeai as genai
 import os
+from dotenv import load_dotenv
 
-# Hardcoding key for testing
-api_key = "AIzaSyCEH6VNW8ngDdAQeRlFpUr7vQnTLMjolKg"
+load_dotenv()
+
+# Use environment variable instead of hardcoded key
+api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 
 print("Listing models...")

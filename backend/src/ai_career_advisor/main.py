@@ -125,6 +125,20 @@ try:
 except Exception as e:
     logger.error(f"✗ Recommendations router failed: {e}")
 
+try:
+    from ai_career_advisor.api.routes.admin_route import router as admin_router
+    app.include_router(admin_router, prefix="/api/admin")
+    logger.info("✓ Admin router loaded")
+except Exception as e:
+    logger.error(f"✗ Admin router failed: {e}")
+
+try:
+    from ai_career_advisor.api.routes.intent import router as intent_router
+    app.include_router(intent_router, prefix="/api")
+    logger.info("✓ Intent router loaded")
+except Exception as e:
+    logger.error(f"✗ Intent router failed: {e}")
+
 @app.get('/health')
 async def health_check():
     logger.info("Health check called")

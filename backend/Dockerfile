@@ -46,6 +46,9 @@ COPY alembic/ /app/alembic/
 RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
+# Add src to Python path so ai_career_advisor module is discoverable
+ENV PYTHONPATH=/app/src
+
 # Expose port 7860 (Required by Hugging Face Spaces)
 ENV PORT=7860
 EXPOSE 7860

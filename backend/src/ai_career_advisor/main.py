@@ -27,7 +27,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Temporarily allow all for debugging local
+    allow_origins=origins,  # Use defined origins list for security
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

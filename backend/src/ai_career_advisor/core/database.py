@@ -32,9 +32,13 @@ if DATABASE_URL:
 else:
     logger.warning("⚠️ No DATABASE_URL found, utilizing default")
 
-# Fix for Neon/Render which provide postgres:// but sqlalchemy needs postgresql+asyncpg://
-if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+# Fix for Neon/Render/HuggingFace which provide postgres:// or postgresql://
+# But SQLAlchemy Async requires postgresql+asyncpg://
+if DATABASE_URL:
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+asyncpg://"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 
 # Base class for all orm model

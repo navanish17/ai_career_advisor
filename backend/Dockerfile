@@ -12,7 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install python dependencies
 COPY requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+# Use --only-binary to prefer prebuilt wheels (faster)
+# Use --no-cache-dir to reduce image size
+RUN pip install --upgrade pip && \
+    pip wheel --only-binary :all: --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt || \
+    pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
 
 
 # Stage 2: Runtime

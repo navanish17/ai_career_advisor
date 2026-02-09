@@ -17,6 +17,10 @@ DATABASE_URL = os.getenv(
     "sqlite+aiosqlite:///D:/Cdac_project/project_02/dev.db"
 )
 
+# Fix for Neon/Render which provide postgres:// but sqlalchemy needs postgresql+asyncpg://
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+
 
 # Base class for all orm model
 

@@ -10,12 +10,27 @@ from sqlalchemy.ext.asyncio import (
 from sqlalchemy.orm import DeclarativeBase
 
 
-# Sqlite fallback for development
+import logging
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite+aiosqlite:///D:/Cdac_project/project_02/dev.db"
-)
+# Configure logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Sqlite fallback for development (Relative path for Linux compatibility)
+DEFAULT_DB_URL = "sqlite+aiosqlite:///./dev.db"
+
+DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DB_URL)
+
+# Log the database URL being used (masked for security)
+if DATABASE_URL:
+    masked_url = DATABASE_URL
+    if "@" in masked_url:
+        # Simple mask: keep protocol, mask credentials
+        protocol = masked_url.split("://")[0]
+        masked_url = f"{protocol}://****@..."
+    logger.info(f"🔌 Connecting to Database: {masked_url}")
+else:
+    logger.warning("⚠️ No DATABASE_URL found, utilizing default")
 
 # Fix for Neon/Render which provide postgres:// but sqlalchemy needs postgresql+asyncpg://
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):

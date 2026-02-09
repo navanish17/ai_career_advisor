@@ -33,7 +33,7 @@ class CareerInsightService:
             logger.info(f"🔄 Generating insight for career: {career_name} (ID: {career_id})")
             
             
-            data = generate_career_insight(career_name)
+            data = await generate_career_insight(career_name)
             
             
             insight = CareerInsight(

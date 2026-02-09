@@ -11,7 +11,9 @@ from ai_career_advisor.Schemas.chatbot import (
 from ai_career_advisor.services.intentfilter import IntentFilter
 from ai_career_advisor.services.chatbot_service import ChatbotService
 from ai_career_advisor.models.chatconversation import ChatConversation
+from ai_career_advisor.models.user import User
 from ai_career_advisor.core.database import get_db
+from ai_career_advisor.core.security import get_current_user
 from ai_career_advisor.core.logger import logger
 from sqlalchemy import select
 
@@ -41,15 +43,16 @@ async def check_intent(request: IntentCheckRequest):
 @router.post("/ask", response_model=ChatbotAskResponse)
 async def ask_chatbot(
     request: ChatbotAskRequest,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     try:
-        logger.info(f"Chatbot ask: {request.query}")
+        logger.info(f"Chatbot ask from user {current_user.email}: {request.query}")
         
         result = await ChatbotService.ask(
             query=request.query,
             session_id=request.sessionid,
-            user_email=None,
+            user_email=current_user.email,
             db=db,
             model_preference=request.model
         )
@@ -72,13 +75,17 @@ async def ask_chatbot(
 @router.get("/history/{sessionid}")
 async def get_conversation_history(
     sessionid: str,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     try:
-        # Get last 10 conversations for this session (most recent first, then reverse for display)
+        # Get last 10 conversations for this session AND user (most recent first, then reverse for display)
         result = await db.execute(
             select(ChatConversation)
-            .where(ChatConversation.sessionid == sessionid)
+            .where(
+                ChatConversation.sessionid == sessionid,
+                ChatConversation.useremail == current_user.email
+            )
             .order_by(ChatConversation.createdat.desc())
             .limit(10)  # Only last 10 conversations
         )
@@ -102,17 +109,21 @@ async def get_conversation_history(
 @router.post("/feedback", response_model=ChatFeedbackResponse)
 async def submit_feedback(
     request: ChatFeedbackRequest,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     try:
         result = await db.execute(
             select(ChatConversation)
-            .where(ChatConversation.id == request.conversationid)
+            .where(
+                ChatConversation.id == request.conversationid,
+                ChatConversation.useremail == current_user.email
+            )
         )
         conversation = result.scalar_one_or_none()
         
         if not conversation:
-            raise HTTPException(status_code=404, detail="Conversation not found")
+            raise HTTPException(status_code=404, detail="Conversation not found or unauthorized")
         
         conversation.upvoted = request.upvoted
         conversation.feedbacktext = request.feedbacktext

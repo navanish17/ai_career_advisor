@@ -77,7 +77,7 @@ export const useChat = () => {
     setIsLoading(true);
 
     try {
-      const response = await api.post<ChatResponse>('/chatbot/ask', {
+      const response = await api.post<ChatResponse>('/api/chatbot/ask', {
         query: content.trim(),
         sessionid: sessionId, // Include session ID for backend tracking
         model: model

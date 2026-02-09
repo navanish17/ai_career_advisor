@@ -200,7 +200,7 @@ const CollegeFinder = () => {
     if (!selectedCollege) return;
 
     setIsSettingAlert(true);
-    const res = await api.post('/admission-alerts/set-alert', {
+    const res = await api.post('/api/admission-alerts/set-alert', {
       user_email: email,
       college_name: selectedCollege.name,
       degree: selectedDegree,

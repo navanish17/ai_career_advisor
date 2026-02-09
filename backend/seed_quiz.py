@@ -1,10 +1,17 @@
 import asyncio
+import sys
+import os
+
+# Add backend to path
+BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, BACKEND_DIR)
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from src.ai_career_advisor.core.database import AsyncSessionLocal
-from src.ai_career_advisor.models.quiz_question import QuizQuestion
-from src.ai_career_advisor.core.logger import logger
+from ai_career_advisor.core.database import AsyncSessionLocal
+from ai_career_advisor.models.quiz_question import QuizQuestion
+from ai_career_advisor.core.logger import logger
 
 
 

@@ -263,13 +263,14 @@ class ModelManager:
                 
                 genai.configure(api_key=api_key)
                 
-                # Using text-embedding-004 which is optimized for retrieval
+                # Using text-embedding-004 (latest Gemini embedding model)
+                # Note: Don't use "models/" prefix for embed_content
                 loop = asyncio.get_event_loop()
                 result = await loop.run_in_executor(
                     None,
                     partial(
                         genai.embed_content,
-                        model="models/text-embedding-004",
+                        model="models/gemini-embedding-001",
                         content=text,
                         task_type="retrieval_document"
                     )

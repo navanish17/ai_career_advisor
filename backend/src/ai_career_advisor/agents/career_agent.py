@@ -252,8 +252,12 @@ INSTRUCTIONS:
 - {lang_instruction}
 - Be concise (under 200 words)
 - Use the context provided
-- If context is insufficient, say so and suggest using our tools
-- Be encouraging and helpful"""
+- If context is insufficient, say so
+- Be encouraging and helpful
+- Use these links for features:
+  * College Finder: [College Finder](/college-finder)
+  * Career Roadmap: [Career Roadmap](/roadmap/backward)
+  * Stream Finder: [Stream Finder](/stream-finder)"""
 
         try:
             # Combine system and user prompt for ModelManager

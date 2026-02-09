@@ -74,7 +74,7 @@ const MyAlerts = () => {
 
     setIsLoading(true);
     const res = await api.get<Alert[] | { alerts: Alert[] }>(
-      `/admission-alerts/my-alerts?email=${encodeURIComponent(searchEmail)}`
+      `/api/admission-alerts/my-alerts?email=${encodeURIComponent(searchEmail)}`
     );
 
     if (res.data) {
@@ -210,9 +210,8 @@ const MyAlerts = () => {
                         {group.alerts.map((alert) => (
                           <div
                             key={alert.id}
-                            className={`flex items-center justify-between p-2 rounded-lg ${
-                              alert.is_sent ? 'bg-muted/50' : 'bg-primary/5'
-                            }`}
+                            className={`flex items-center justify-between p-2 rounded-lg ${alert.is_sent ? 'bg-muted/50' : 'bg-primary/5'
+                              }`}
                           >
                             <div className="flex items-center gap-2">
                               {alert.is_sent ? (

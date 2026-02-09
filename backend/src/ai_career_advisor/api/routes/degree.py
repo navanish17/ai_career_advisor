@@ -6,7 +6,7 @@ from ai_career_advisor.Schemas.degree import DegreeResponse
 from ai_career_advisor.services.degree_service import DegreeService
 from ai_career_advisor.core.database import get_db
 
-router = APIRouter(prefix="/api/degree", tags=["degree"])
+router = APIRouter(tags=["degree"])
 
 @router.get("/all", response_model=List[DegreeResponse])
 async def get_all_degrees(db: AsyncSession = Depends(get_db)):

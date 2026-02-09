@@ -16,8 +16,11 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Sqlite fallback for development (Relative path for Linux compatibility)
-DEFAULT_DB_URL = "sqlite+aiosqlite:///./dev.db"
+# Use absolute path for dev.db relative to this file to avoid CWD confusion
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent # Points to backend/
+DB_PATH = BASE_DIR / "dev.db"
+DEFAULT_DB_URL = f"sqlite+aiosqlite:///{DB_PATH}"
 
 DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DB_URL)
 

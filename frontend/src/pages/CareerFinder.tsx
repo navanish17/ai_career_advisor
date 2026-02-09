@@ -321,9 +321,9 @@ const CareerFinder = () => {
 
                                             <div className="text-right ml-4">
                                                 <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                                                    {career.match_score}%
+                                                    #{index + 1}
                                                 </div>
-                                                <p className="text-xs text-muted-foreground mb-3">Match Score</p>
+                                                <p className="text-xs text-muted-foreground mb-3">Rank</p>
                                                 <Button
                                                     onClick={() => handleViewRoadmap(career.career_name)}
                                                     className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"

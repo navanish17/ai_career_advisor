@@ -45,9 +45,9 @@ class ChatbotService:
             "message": "\n\n🗺️ **Get a detailed career roadmap!**\n👉 [Generate your personalized roadmap here](/roadmap/backward)"
         },
         "college": {
-            "keywords": ["college find", "find college", "best college", "top college", "college for", "iit admission", "nit admission", "bits", "college recommendation"],
-            "link": "/colleges",
-            "message": "\n\n🏫 **Looking for the perfect college?**\n👉 [Use our College Finder tool](/colleges)"
+            "keywords": ["college find", "find college", "best college", "top college", "college for", "iit admission", "nit admission", "bits", "college recommendation", "suggest college", "college finder", "search college"],
+            "link": "/college-finder",
+            "message": "\n\n🏫 **Looking for the perfect college?**\n👉 [Use our College Finder tool](/college-finder)"
         }
     }
     

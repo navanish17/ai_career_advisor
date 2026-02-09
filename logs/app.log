@@ -610,3 +610,54 @@ Please retry in 27.366789615s. [links {
  2026-01-29 14:19:05 | INFO | middleware | POST /api/auth/login → 200 (732.66 ms)
  2026-01-29 14:19:05 | INFO | middleware | GET /api/roadmap/user → 422 (12.00 ms)
  2026-01-29 14:19:05 | INFO | middleware | GET /api/profile/profile → 200 (19.97 ms)
+ 2026-02-09 14:18:06 | INFO | seed_career_attributes | Starting Career Attributes seeding...
+ 2026-02-09 14:18:06 | ERROR | seed_career_attributes | Seeding failed: name 'select' is not defined
+ 2026-02-09 14:18:46 | INFO | seed_career_attributes | Starting Career Attributes seeding...
+ 2026-02-09 14:18:46 | ERROR | seed_career_attributes | Seeding failed: name 'select' is not defined
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Starting Career Attributes seeding...
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: Software Engineer
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: Data Scientist
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: Product Manager
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: Digital Marketing Specialist
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: UX/UI Designer
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: Mechanical Engineer
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: Civil Engineer
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: Chartered Accountant
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: Doctor (MBBS)
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | Adding: IAS Officer
+ 2026-02-09 14:19:14 | INFO | seed_career_attributes | ✅ Career Attributes seeding completed successfully!
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Starting Career Attributes seeding...
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: Software Engineer
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: Data Scientist
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: Product Manager
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: Digital Marketing Specialist
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: UX/UI Designer
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: Mechanical Engineer
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: Civil Engineer
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: Chartered Accountant
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: Doctor (MBBS)
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Skipping existing: IAS Officer
+ 2026-02-09 14:28:05 | INFO | seed_career_attributes | Career Attributes seeding completed successfully!
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Starting Career Attributes seeding...
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | 🗑️ Clearing existing career attributes...
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | ✅ Cleared existing data.
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Software Engineer
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Data Scientist
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: School Teacher
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: College Professor
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Content Writer
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Journalist
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Author / Novelist
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Lawyer
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: IAS Officer
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Product Manager
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Human Resources (HR) Manager
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Chartered Accountant
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Mechanical Engineer
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Civil Engineer
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Active Architect
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: UX/UI Designer
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Doctor (MBBS)
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Pharmacist
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | Adding: Clinical Psychologist
+ 2026-02-09 14:35:15 | INFO | seed_career_attributes | ✅ Career Attributes seeding completed successfully!

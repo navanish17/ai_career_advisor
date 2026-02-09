@@ -10,7 +10,7 @@ import type { Branch } from '@/types/career';
 const Branches = () => {
   const navigate = useNavigate();
   const { degreeId } = useParams<{ degreeId: string }>();
-  
+
   const [branches, setBranches] = useState<Branch[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,8 +24,10 @@ const Branches = () => {
       setIsLoading(true);
       try {
         const response = await api.get(`/api/branch/from-degree/${degreeId}`);
-        setBranches(response.data);
+        const branchData = response.data as Branch[] | undefined;
+        setBranches(branchData || []);
       } catch (error: any) {
+        setBranches([]); // Reset to empty array on error
         toast({
           title: 'Error',
           description: error.response?.data?.detail || 'Failed to load branches',
@@ -35,7 +37,7 @@ const Branches = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchBranches();
   }, [degreeId, navigate]);
 

@@ -3,6 +3,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -39,6 +40,9 @@ export const CollegeDetailDialog = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">{college.name}</DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground">
+            Detailed information and alerts for {college.name}
+          </DialogDescription>
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             {college.location && (
               <span className="flex items-center gap-1">

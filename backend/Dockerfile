@@ -54,5 +54,6 @@ ENV PORT=7860
 EXPOSE 7860
 
 # Run with Gunicorn + Uvicorn workers
-# Adjust --workers based on CPU cores (HF Spaces = 2 vCPU)
-CMD gunicorn src.ai_career_advisor.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+# Change to src directory so ai_career_advisor is directly importable
+WORKDIR /app/src
+CMD ["gunicorn", "ai_career_advisor.main:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:7860"]

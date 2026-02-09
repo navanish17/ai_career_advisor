@@ -32,13 +32,22 @@ if DATABASE_URL:
 else:
     logger.warning("⚠️ No DATABASE_URL found, utilizing default")
 
-# Fix for Neon/Render/HuggingFace which provide postgres:// or postgresql://
-# But SQLAlchemy Async requires postgresql+asyncpg://
-if DATABASE_URL:
-    if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
-    elif DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+asyncpg://"):
-        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+from sqlalchemy.engine.url import make_url
+
+# Reliable Logic to fix driver
+try:
+    if DATABASE_URL:
+        # Parse the URL object from SQLAlchemy
+        url_obj = make_url(DATABASE_URL)
+        
+        # If it's postgres or postgresql without a driver, force asyncpg
+        if url_obj.drivername in ['postgres', 'postgresql']:
+            url_obj = url_obj.set(drivername='postgresql+asyncpg')
+            DATABASE_URL = str(url_obj)
+            logger.info(f"🔧 Automatically updated DB driver to: {url_obj.drivername}")
+            
+except Exception as e:
+    logger.error(f"Failed to parse/update DB URL: {e}")
 
 
 # Base class for all orm model

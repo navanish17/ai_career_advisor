@@ -49,11 +49,12 @@ USER appuser
 # Add src to Python path so ai_career_advisor module is discoverable
 ENV PYTHONPATH=/app/src
 
-# Expose port 7860 (Required by Hugging Face Spaces)
-ENV PORT=7860
-EXPOSE 7860
+# Expose port 10000 (Render default)
+ENV PORT=10000
+EXPOSE 10000
 
 # Run with Gunicorn + Uvicorn workers
 # Change to src directory so ai_career_advisor is directly importable
 WORKDIR /app/src
-CMD ["gunicorn", "ai_career_advisor.main:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:7860"]
+# Use shell form CMD to allow $PORT expansion
+CMD gunicorn ai_career_advisor.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT

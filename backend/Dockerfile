@@ -7,6 +7,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
@@ -22,6 +23,7 @@ WORKDIR /app
 # Install runtime dependencies (libpq for postgres)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy wheels from builder

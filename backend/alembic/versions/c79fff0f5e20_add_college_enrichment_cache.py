@@ -9,7 +9,6 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import sqlite
 
 # revision identifiers, used by Alembic.
 revision: str = 'c79fff0f5e20'
@@ -46,11 +45,11 @@ def downgrade() -> None:
     op.create_table('college_enrichments',
     sa.Column('id', sa.INTEGER(), nullable=False),
     sa.Column('college_id', sa.INTEGER(), nullable=False),
-    sa.Column('degrees', sqlite.JSON(), nullable=True),
+    sa.Column('degrees', sa.JSON(), nullable=True),
     sa.Column('entrance_exam', sa.VARCHAR(length=100), nullable=True),
     sa.Column('fees', sa.VARCHAR(length=100), nullable=True),
     sa.Column('avg_package', sa.VARCHAR(length=100), nullable=True),
-    sa.Column('source_urls', sqlite.JSON(), nullable=True),
+    sa.Column('source_urls', sa.JSON(), nullable=True),
     sa.Column('last_fetched_at', sa.DATETIME(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.ForeignKeyConstraint(['college_id'], ['colleges.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),

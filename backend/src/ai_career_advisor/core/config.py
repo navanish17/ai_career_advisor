@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     ENV: str = "development"
     DEBUG: bool = True
 
-    DATABASE_URL: str = "sqlite:///D:/Cdac_project/project_02/dev.db"
+    DATABASE_URL: str = ""  # Must be set via environment variable
 
     REDIS_URL: Optional[str] = None
 

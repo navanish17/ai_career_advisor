@@ -56,5 +56,8 @@ EXPOSE 10000
 # Copy startup script with executable permissions
 COPY --chmod=755 start.sh /app/start.sh
 
+# Copy diagnostic script
+COPY test_db.py /app/test_db.py
+
 # Use start script as entrypoint
 CMD ["/app/start.sh"]

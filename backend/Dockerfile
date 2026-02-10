@@ -53,8 +53,9 @@ ENV PYTHONPATH=/app/src
 ENV PORT=10000
 EXPOSE 10000
 
-# Run with Gunicorn + Uvicorn workers
-# Change to src directory so ai_career_advisor is directly importable
-WORKDIR /app/src
-# Use shell form CMD to allow $PORT expansion
-CMD gunicorn ai_career_advisor.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+# Copy startup script and make executable
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Use start script as entrypoint
+CMD ["/app/start.sh"]

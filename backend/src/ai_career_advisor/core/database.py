@@ -35,35 +35,29 @@ if DATABASE_URL:
 else:
     logger.warning("⚠️ No DATABASE_URL found, utilizing default")
 
-from sqlalchemy.engine.url import make_url
+# Handle Render's PostgreSQL URL which might start with postgres://
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+elif DATABASE_URL and DATABASE_URL.startswith("postgresql://"):
+    # Ensure it uses asyncpg driver
+    if "+asyncpg" not in DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
-# Reliable Logic to fix driver
-try:
-    if DATABASE_URL:
-        # Parse the URL object from SQLAlchemy
-        url_obj = make_url(DATABASE_URL)
-        
-        # If it's postgres or postgresql without a driver, force asyncpg
-        if url_obj.drivername in ['postgres', 'postgresql']:
-            url_obj = url_obj.set(drivername='postgresql+asyncpg')
-            DATABASE_URL = str(url_obj)
-            logger.info(f"🔧 Automatically updated DB driver to: {url_obj.drivername}")
-            
-except Exception as e:
-    logger.error(f"Failed to parse/update DB URL: {e}")
-
+logger.info(f"🔧 Using Database URL: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else '...' }")
 
 # Base class for all orm model
-
 class Base(DeclarativeBase):
     pass
 
 #Async Database engine
-
 engine = create_async_engine(
     DATABASE_URL,
-    echo = False,
-    future = True
+    echo=False,
+    future=True,
+    pool_pre_ping=True,  # Test connections before using them
+    # Render requires SSL for external connections, but internal ones might not.
+    # We'll try to let standard libpq rules apply or be permissive if needed.
+    # For asyncpg, passing ssl=True or ssl='require' is often needed.
 )
 
 #Session Factory 

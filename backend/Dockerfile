@@ -53,9 +53,8 @@ ENV PYTHONPATH=/app/src
 ENV PORT=10000
 EXPOSE 10000
 
-# Copy startup script and make executable
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+# Copy startup script with executable permissions
+COPY --chmod=755 start.sh /app/start.sh
 
 # Use start script as entrypoint
 CMD ["/app/start.sh"]

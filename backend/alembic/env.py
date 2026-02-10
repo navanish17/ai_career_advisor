@@ -10,11 +10,36 @@ sys.path.append(BASE_DIR)
 from ai_career_advisor.core.database import Base
 
 # Import all models to ensure they're registered with Base.metadata
+# Core user models
 from ai_career_advisor.models.user import User
-from ai_career_advisor.models.roadmap import SavedRoadmap
+from ai_career_advisor.models.profile import Profile
 from ai_career_advisor.models.user_preferences import UserPreferences
+
+# Career models
+from ai_career_advisor.models.career import Career
 from ai_career_advisor.models.career_attributes import CareerAttributes
+from ai_career_advisor.models.career_template import CareerTemplate
+from ai_career_advisor.models.career_insight import CareerInsight
 from ai_career_advisor.models.user_career_interaction import UserCareerInteraction
+
+# Roadmap models
+from ai_career_advisor.models.roadmap import Roadmap
+from ai_career_advisor.models.roadmap_step import RoadmapStep
+from ai_career_advisor.models.backward_roadmap import BackwardRoadmap
+
+# Education models
+from ai_career_advisor.models.degree import Degree
+from ai_career_advisor.models.branch import Branch
+from ai_career_advisor.models.college import College
+from ai_career_advisor.models.college_details import CollegeDetails
+from ai_career_advisor.models.college_program_cache import CollegeProgramCache
+from ai_career_advisor.models.college_entrance_mapping import CollegeEntranceMapping
+from ai_career_advisor.models.entrance_exam import EntranceExam
+from ai_career_advisor.models.exam_alert import ExamAlert
+
+# Other models
+from ai_career_advisor.models.quiz_question import QuizQuestion
+from ai_career_advisor.models.chatconversation import ChatConversation
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context

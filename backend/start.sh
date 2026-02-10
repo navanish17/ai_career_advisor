@@ -5,6 +5,10 @@ set -e
 
 echo "🚀 Starting deployment script..."
 
+# Run diagnostic script
+echo "🔍 Running database diagnostics..."
+python3 test_db.py
+
 # Run database migrations
 echo "📦 Running database migrations..."
 cd /app

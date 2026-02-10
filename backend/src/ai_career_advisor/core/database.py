@@ -35,13 +35,18 @@ if DATABASE_URL:
 else:
     logger.warning("⚠️ No DATABASE_URL found, utilizing default")
 
-# Handle Render's PostgreSQL URL which might start with postgres://
+# Handle PostgreSQL URL for asyncpg compatibility
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
 elif DATABASE_URL and DATABASE_URL.startswith("postgresql://"):
-    # Ensure it uses asyncpg driver
     if "+asyncpg" not in DATABASE_URL:
         DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+# asyncpg does NOT understand ?sslmode=require - strip it and pass ssl separately
+require_ssl = False
+if "sslmode=require" in DATABASE_URL:
+    require_ssl = True
+    DATABASE_URL = DATABASE_URL.replace("?sslmode=require", "").replace("&sslmode=require", "")
 
 logger.info(f"🔧 Using Database URL: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else '...' }")
 
@@ -49,16 +54,21 @@ logger.info(f"🔧 Using Database URL: {DATABASE_URL.split('@')[-1] if '@' in DA
 class Base(DeclarativeBase):
     pass
 
+# Build engine kwargs
+import ssl as ssl_module
+engine_kwargs = {
+    "echo": False,
+    "future": True,
+    "pool_pre_ping": True,
+}
+if require_ssl:
+    ssl_ctx = ssl_module.create_default_context()
+    ssl_ctx.check_hostname = False
+    ssl_ctx.verify_mode = ssl_module.CERT_NONE
+    engine_kwargs["connect_args"] = {"ssl": ssl_ctx}
+
 #Async Database engine
-engine = create_async_engine(
-    DATABASE_URL,
-    echo=False,
-    future=True,
-    pool_pre_ping=True,  # Test connections before using them
-    # Render requires SSL for external connections, but internal ones might not.
-    # We'll try to let standard libpq rules apply or be permissive if needed.
-    # For asyncpg, passing ssl=True or ssl='require' is often needed.
-)
+engine = create_async_engine(DATABASE_URL, **engine_kwargs)
 
 #Session Factory 
 AsyncSessionLocal = async_sessionmaker(

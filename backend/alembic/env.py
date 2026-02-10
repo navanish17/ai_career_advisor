@@ -98,14 +98,27 @@ def run_migrations_online() -> None:
     """
     # Override sqlalchemy.url with DATABASE_URL from environment
     import os
+    import ssl as ssl_module
     database_url = os.getenv("DATABASE_URL")
+    connect_args = {}
     if database_url:
+        # Strip sslmode=require (asyncpg doesn't understand it)
+        if "sslmode=require" in database_url:
+            ssl_ctx = ssl_module.create_default_context()
+            ssl_ctx.check_hostname = False
+            ssl_ctx.verify_mode = ssl_module.CERT_NONE
+            connect_args = {"ssl": ssl_ctx}
+            database_url = database_url.replace("?sslmode=require", "").replace("&sslmode=require", "")
+        # Fix driver prefix
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
         config.set_main_option("sqlalchemy.url", database_url)
     
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        connect_args=connect_args,
     )
 
     with connectable.connect() as connection:

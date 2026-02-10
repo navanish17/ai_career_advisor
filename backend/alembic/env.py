@@ -98,27 +98,33 @@ def run_migrations_online() -> None:
     """
     # Override sqlalchemy.url with DATABASE_URL from environment
     import os
-    import ssl as ssl_module
+    from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
     database_url = os.getenv("DATABASE_URL")
-    connect_args = {}
     if database_url:
-        # Strip sslmode=require (asyncpg doesn't understand it)
-        if "sslmode=require" in database_url:
-            ssl_ctx = ssl_module.create_default_context()
-            ssl_ctx.check_hostname = False
-            ssl_ctx.verify_mode = ssl_module.CERT_NONE
-            connect_args = {"ssl": ssl_ctx}
-            database_url = database_url.replace("?sslmode=require", "").replace("&sslmode=require", "")
-        # Fix driver prefix
-        if database_url.startswith("postgres://"):
-            database_url = database_url.replace("postgres://", "postgresql://", 1)
-        config.set_main_option("sqlalchemy.url", database_url)
+        # Fix driver prefix for sync psycopg2
+        parsed = urlparse(database_url)
+        
+        # psycopg2 understands sslmode but NOT channel_binding
+        # Keep only sslmode from query params
+        query_params = parse_qs(parsed.query)
+        clean_params = {}
+        if "sslmode" in query_params:
+            clean_params["sslmode"] = query_params["sslmode"][0]
+        
+        clean_url = urlunparse((
+            "postgresql",          # psycopg2 driver (sync)
+            parsed.netloc,
+            parsed.path,
+            "",
+            urlencode(clean_params) if clean_params else "",
+            ""
+        ))
+        config.set_main_option("sqlalchemy.url", clean_url)
     
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
-        connect_args=connect_args,
     )
 
     with connectable.connect() as connection:

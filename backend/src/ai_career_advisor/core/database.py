@@ -36,19 +36,27 @@ else:
     logger.warning("⚠️ No DATABASE_URL found, utilizing default")
 
 # Handle PostgreSQL URL for asyncpg compatibility
-if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
-elif DATABASE_URL and DATABASE_URL.startswith("postgresql://"):
-    if "+asyncpg" not in DATABASE_URL:
-        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+from urllib.parse import urlparse, urlunparse
 
-# asyncpg does NOT understand ?sslmode=require - strip it and pass ssl separately
-require_ssl = False
-if "sslmode=require" in DATABASE_URL:
-    require_ssl = True
-    DATABASE_URL = DATABASE_URL.replace("?sslmode=require", "").replace("&sslmode=require", "")
+if DATABASE_URL and DATABASE_URL.startswith(("postgres://", "postgresql://")):
+    # Parse URL to strip ALL query parameters (asyncpg doesn't understand them)
+    parsed = urlparse(DATABASE_URL)
+    require_ssl = "sslmode=require" in (parsed.query or "")
+    
+    # Rebuild URL without query params and with correct driver
+    clean_url = urlunparse((
+        "postgresql+asyncpg",  # scheme - always use asyncpg
+        parsed.netloc,         # user:pass@host:port
+        parsed.path,           # /database_name
+        "",                    # params
+        "",                    # query - STRIPPED (asyncpg can't handle these)
+        ""                     # fragment
+    ))
+    DATABASE_URL = clean_url
 
-logger.info(f"🔧 Using Database URL: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else '...' }")
+    logger.info(f"🔧 Using Database URL: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else '...' }")
+else:
+    require_ssl = False
 
 # Base class for all orm model
 class Base(DeclarativeBase):

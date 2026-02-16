@@ -141,14 +141,15 @@ class ModelManager:
         raise Exception("Gemini generation failed after retries")
     
     @classmethod
-    async def generate_with_perplexity(cls, prompt: str) -> str:
+    async def generate_with_perplexity(cls, prompt: str, return_full: bool = False) -> Any:
         """
         Fallback to Perplexity API
+        If return_full is True, returns dict with content and citations
         """
         if not settings.PERPLEXITY_API_KEY:
             raise ValueError("PERPLEXITY_API_KEY not configured")
         
-        logger.info("🔄 Switching to Perplexity API as fallback")
+        logger.info("Switching to Perplexity API as fallback")
         
         headers = {
             "Authorization": f"Bearer {settings.PERPLEXITY_API_KEY}",
@@ -179,73 +180,109 @@ class ModelManager:
             
             if response.status_code == 200:
                 result = response.json()
-                logger.success("✅ Generated with Perplexity API")
-                return result.get("choices", [{}])[0].get("message", {}).get("content", "")
+                logger.success("Generated with Perplexity API")
+                choices = result.get("choices", [{}])[0]
+                content = choices.get("message", {}).get("content", "")
+                citations = result.get("citations", [])
+                
+                if return_full:
+                    return {
+                        "content": content,
+                        "citations": citations,
+                        "model": "sonar-pro"
+                    }
+                return content
             else:
-                logger.error(f"❌ Perplexity API error: {response.status_code} - {response.text}")
+                logger.error(f"Perplexity API error: {response.status_code} - {response.text}")
                 raise Exception(f"Perplexity API error: {response.status_code}")
         
         except Exception as e:
-            logger.error(f"❌ Perplexity API exception: {str(e)}")
+            logger.error(f"Perplexity API exception: {str(e)}")
             raise
     
     @classmethod
-    async def generate_smart(cls, prompt: str) -> str:
+    async def generate_smart(cls, prompt: str, return_full: bool = False) -> Any:
         """
         Smart generation with explicit fallback chain:
         1. Gemini 2.5 Flash
         2. Gemini 2.5 Flash-Lite
-        3. Perplexity Sonar-Pro
+        3. Perplexity Sonar-Pro (returns citations if return_full=True)
         """
         # 1. Try Gemini 2.5 Flash
         try:
-            return await cls.generate_with_gemini(prompt, model="gemini-2.5-flash")
+            content = await cls.generate_with_gemini(prompt, model="gemini-2.5-flash")
+            return {"content": content, "citations": [], "model": "gemini-2.5-flash"} if return_full else content
         except Exception as e1:
-            logger.warning(f"⚠️ Gemini 2.5 Flash failed: {e1}. Trying Flash-Lite...")
+            logger.warning(f"Gemini 2.5 Flash failed: {e1}. Trying Flash-Lite...")
             
             # 2. Try Gemini 2.5 Flash-Lite
             try:
-                return await cls.generate_with_gemini(prompt, model="gemini-2.5-flash-lite")
+                content = await cls.generate_with_gemini(prompt, model="gemini-2.5-flash-lite")
+                return {"content": content, "citations": [], "model": "gemini-2.5-flash-lite"} if return_full else content
             except Exception as e2:
-                logger.warning(f"⚠️ Gemini 2.5 Flash-Lite failed: {e2}. Switching to Perplexity...")
+                logger.warning(f"Gemini 2.5 Flash-Lite failed: {e2}. Switching to Perplexity...")
                 
                 # 3. Try Perplexity Sonar-Pro
                 try:
-                    return await cls.generate_with_perplexity(prompt)
+                    return await cls.generate_with_perplexity(prompt, return_full=return_full)
                 except Exception as e3:
-                    logger.error(f"❌ All providers failed. Final error: {e3}")
+                    logger.error(f"All providers failed. Final error: {e3}")
                     raise Exception(f"All models failed. Last error: {e3}")
     
     @classmethod
     async def generate(cls, prompt: str, preference: str = "auto") -> str:
         """
         Generate content based on user preference.
-        - "auto": Use smart fallback chain (Flash -> Lite -> Sonar)
-        - "sonar-pro": Use Perplexity
-        - "gemini-2.5-flash": Use specific Gemini model
+        Returns ONLY text (backward compatibility)
         """
         if not preference or preference.lower() == "auto":
-            return await cls.generate_smart(prompt)
+            return await cls.generate_smart(prompt, return_full=False)
         
         elif preference.lower() == "sonar-pro":
             try:
-                return await cls.generate_with_perplexity(prompt)
+                return await cls.generate_with_perplexity(prompt, return_full=False)
             except Exception as e:
-                # If specific model requested fails, we DO NOT fallback
                 raise Exception(f"Perplexity Sonar-Pro failed: {str(e)}")
         
         elif "gemini" in preference.lower():
             try:
-                # Extract model name if valid, otherwise default to flash
                 model_name = preference if preference in cls.GEMINI_MODELS else "gemini-2.5-flash"
                 return await cls.generate_with_gemini(prompt, model=model_name)
             except Exception as e:
-                # If specific model requested fails, we DO NOT fallback
                 raise Exception(f"{model_name} failed: {str(e)}")
         
         else:
-            # Unknown preference default to smart
-            return await cls.generate_smart(prompt)
+            return await cls.generate_smart(prompt, return_full=False)
+
+    @classmethod
+    async def generate_extended(cls, prompt: str, preference: str = "auto") -> Dict[str, Any]:
+        """
+        Generate content WITH metadata (citations, model used)
+        Returns: {"content": str, "citations": List[str], "model": str}
+        """
+        if not preference or preference.lower() == "auto":
+            return await cls.generate_smart(prompt, return_full=True)
+        
+        elif preference.lower() == "sonar-pro":
+            try:
+                return await cls.generate_with_perplexity(prompt, return_full=True)
+            except Exception as e:
+                raise Exception(f"Perplexity Sonar-Pro failed: {str(e)}")
+        
+        elif "gemini" in preference.lower():
+            try:
+                model_name = preference if preference in cls.GEMINI_MODELS else "gemini-2.5-flash"
+                content = await cls.generate_with_gemini(prompt, model=model_name)
+                return {
+                    "content": content,
+                    "citations": [],
+                    "model": model_name
+                }
+            except Exception as e:
+                raise Exception(f"{model_name} failed: {str(e)}")
+        
+        else:
+            return await cls.generate_smart(prompt, return_full=True)
     
     @classmethod
     async def get_embedding(cls, text: str) -> List[float]:

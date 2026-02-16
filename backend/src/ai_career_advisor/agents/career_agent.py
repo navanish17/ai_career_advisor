@@ -244,20 +244,21 @@ Please ask a career or education-related question! 😊"""
         lang_instruction = "Answer in Hindi/Hinglish." if language == "hi" else "Answer in English only."
         
         system_prompt = f"""You are an AI Career Counselor for Indian students.
-
-CONTEXT:
-{context}
-
-INSTRUCTIONS:
-- {lang_instruction}
-- Be concise (under 200 words)
-- Use the context provided
-- If context is insufficient, say so
-- Be encouraging and helpful
-- Use these links for features:
-  * College Finder: [College Finder](/college-finder)
-  * Career Roadmap: [Career Roadmap](/roadmap/backward)
-  * Stream Finder: [Stream Finder](/stream-finder)"""
+        
+        CONTEXT:
+        {context}
+        
+        INSTRUCTIONS:
+        - {lang_instruction}
+        - Be concise (under 200 words)
+        - Use the context provided
+        - If context is insufficient, search for current, accurate information
+        - Provide specific details: fees, eligibility, dates, salary ranges
+        - Be factual and cite official sources with links
+        - Use these links for features:
+          * College Finder: [College Finder](/college-finder)
+          * Career Roadmap: [Career Roadmap](/roadmap/backward)
+          * Stream Finder: [Stream Finder](/stream-finder)"""
 
         try:
             # Combine system and user prompt for ModelManager
@@ -265,7 +266,34 @@ INSTRUCTIONS:
             
             # Use ModelManager with preference
             model_pref = state.get("model_preference", "auto")
-            response_text = await ModelManager.generate(full_prompt, preference=model_pref)
+            
+            # Use generate_extended to get citations
+            result = await ModelManager.generate_extended(full_prompt, preference=model_pref)
+            
+            response_text = result["content"]
+            citations = result.get("citations", [])
+            
+            # Format and append citations if present
+            if citations:
+                # Deduplicate and clean
+                clean_sources = list(set([s for s in citations if s and s.startswith("http")]))
+                
+                if clean_sources:
+                    source_text = "\n\n**References:**\n"
+                    for i, source in enumerate(clean_sources[:5], 1):
+                        try:
+                            from urllib.parse import urlparse
+                            parsed = urlparse(source)
+                            domain = parsed.netloc.replace("www.", "")
+                            source_text += f"{i}. [{domain}]({source})\n"
+                        except:
+                            source_text += f"{i}. [{source}]({source})\n"
+                    
+                    response_text += source_text
+                    
+                    # Store in tool_outputs for frontend/logging
+                    if "extra_sources" not in state["tool_outputs"]:
+                        state["tool_outputs"]["extra_sources"] = clean_sources
             
             state["messages"].append(AIMessage(content=response_text))
             

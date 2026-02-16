@@ -146,31 +146,102 @@ NOW PROCESS: "{user_input}"
         
         except (ResourceExhausted, GoogleAPIError) as e:
             logger.error(f"    API Error: {str(e)}")
-            return {
-                "is_valid": False,
-                "normalized_career": None,
-                "category": None,
-                "confidence": 0.0,
-                "reason": "Service temporarily unavailable. Please try again."
-            }
+            logger.warning("    ⚠️ Falling back to Sonar (Perplexity)...")
+            return await CareerNormalizerService._normalize_with_sonar(user_input)
         
         except json.JSONDecodeError as e:
             logger.error(f"    JSON parse error: {str(e)}")
             logger.error(f"   Raw response: {text[:200]}")
-            return {
-                "is_valid": False,
-                "normalized_career": None,
-                "category": None,
-                "confidence": 0.0,
-                "reason": "Error processing request. Please try again."
-            }
+            logger.warning("    ⚠️ JSON error, falling back to Sonar...")
+            return await CareerNormalizerService._normalize_with_sonar(user_input)
         
         except Exception as e:
             logger.error(f"    Unexpected error: {str(e)}")
+            logger.warning("    ⚠️ Unexpected error, attempting fallback...")
+            return await CareerNormalizerService._normalize_with_sonar(user_input)
+
+    @staticmethod
+    async def _normalize_with_sonar(user_input: str) -> dict:
+        """
+        Fallback normalization using Perplexity (Sonar)
+        """
+        try:
+            import httpx
+            
+            PERPLEXITY_API_KEY = settings.PERPLEXITY_API_KEY
+            if not PERPLEXITY_API_KEY:
+                logger.error("    ❌ Perplexity API key missing for fallback")
+                return {
+                    "is_valid": False,
+                    "normalized_career": None,
+                    "category": None,
+                    "confidence": 0.0,
+                    "reason": "Service unavailable (Primary failed, Fallback not configured)."
+                }
+                
+            prompt = f"""
+            You are a career normalization engine.
+            User Input: "{user_input}"
+            
+            Task: Validate and normalize this career goal for Indian context.
+            
+            Return ONLY valid JSON:
+            {{
+              "is_valid": true/false,
+              "normalized_career": "Standard Name",
+              "category": "Technology/Healthcare/etc",
+              "confidence": 0.0-1.0,
+              "reason": "Reason if invalid"
+            }}
+            """
+            
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.post(
+                    "https://api.perplexity.ai/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": "sonar",
+                        "messages": [
+                            {"role": "system", "content": "You are a helpful JSON-only assistant."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "temperature": 0.1
+                    }
+                )
+                
+                if response.status_code == 200:
+                    content = response.json()["choices"][0]["message"]["content"]
+                    # Clean markdown
+                    if "```" in content:
+                        content = content.replace("```json", "").replace("```", "").strip()
+                    
+                    result = json.loads(content)
+                    
+                    if result.get("is_valid"):
+                        logger.success(f"   ✅ Normalized (Sonar): '{user_input}' → '{result['normalized_career']}'")
+                    else:
+                        logger.warning(f"   ❌ Invalid career (Sonar): {result.get('reason')}")
+                        
+                    return result
+                else:
+                    logger.error(f"    ❌ Sonar API Error: {response.text}")
+                    return {
+                        "is_valid": False,
+                        "normalized_career": None,
+                        "category": None,
+                        "confidence": 0.0,
+                        "reason": "Both primary and fallback services failed."
+                    }
+                    
+        except Exception as e:
+            logger.error(f"    ❌ Fallback Error: {e}")
             return {
                 "is_valid": False,
                 "normalized_career": None,
                 "category": None,
                 "confidence": 0.0,
-                "reason": "Unexpected error. Please try again."
+                "reason": "All normalization services failed."
             }

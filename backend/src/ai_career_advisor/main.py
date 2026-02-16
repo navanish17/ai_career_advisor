@@ -1,13 +1,50 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from ai_career_advisor.core.logger import logger
 from ai_career_advisor.core.config import settings
+from sqlalchemy import text
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Run database migrations on startup."""
+    try:
+        from ai_career_advisor.core.database import engine, DATABASE_URL
+        async with engine.begin() as conn:
+            # Check if share_token column exists (PostgreSQL compatible)
+            if "postgresql" in DATABASE_URL or "postgres" in DATABASE_URL:
+                result = await conn.execute(text(
+                    "SELECT column_name FROM information_schema.columns "
+                    "WHERE table_name = 'roadmap' AND column_name = 'share_token'"
+                ))
+                column_exists = result.fetchone() is not None
+            else:
+                # SQLite fallback
+                result = await conn.execute(text("PRAGMA table_info(roadmap)"))
+                columns = result.fetchall()
+                column_exists = "share_token" in [col[1] for col in columns]
+
+            if not column_exists:
+                logger.info("🔧 Adding missing 'share_token' column to roadmap table...")
+                await conn.execute(text("ALTER TABLE roadmap ADD COLUMN share_token VARCHAR"))
+                await conn.execute(text(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS ix_roadmap_share_token ON roadmap (share_token)"
+                ))
+                logger.info("✅ share_token column added successfully")
+            else:
+                logger.info("✅ share_token column already exists")
+    except Exception as e:
+        logger.warning(f"⚠️ Auto-migration check failed (non-fatal): {e}")
+
+    yield  # App runs here
 
 
 app = FastAPI(
     title="AI Career Pilot API",
     debug=settings.DEBUG,
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan,
 )
 
 from fastapi import Request

@@ -121,10 +121,16 @@ class ChatbotService:
                         response_text += feature_links
                     
                     # Add sources
-                    sources = ["AI Agent - Career Pilot"]
-                    sources_text = ChatbotService._format_sources(sources, "agent")
-                    if sources_text:
-                        response_text += sources_text
+                    tool_outputs = result.get("tool_outputs", {})
+                    sources = tool_outputs.get("extra_sources", ["AI Agent - Career Pilot"])
+                    
+                    # If agent already formatted sources in text, we don't need to append them again
+                    # But if sources is just a list, we format it here
+                    # Check if response already contains "References:"
+                    if "**References:**" not in response_text:
+                        sources_text = ChatbotService._format_sources(sources, "agent")
+                        if sources_text:
+                            response_text += sources_text
                     
                     response_time = time.time() - start_time
                     
@@ -273,9 +279,17 @@ class ChatbotService:
         source_text = f"\n\n{indicator}\n\n**References:**\n" if indicator else "\n\n**References:**\n"
         
         for i, source in enumerate(clean_sources[:5], 1):  # Max 5 sources
-            # Make URLs clickable in markdown
+            # Make URLs clickable in markdown with clean domain text
             if source.startswith("http://") or source.startswith("https://"):
-                source_text += f"{i}. [{source}]({source})\n"
+                try:
+                    from urllib.parse import urlparse
+                    parsed = urlparse(source)
+                    domain = parsed.netloc.replace("www.", "")
+                    # Keep path if short, otherwise just domain
+                    link_text = domain
+                    source_text += f"{i}. [{link_text}]({source})\n"
+                except:
+                    source_text += f"{i}. [{source}]({source})\n"
             else:
                 source_text += f"{i}. {source}\n"
         
@@ -582,7 +596,7 @@ INSTRUCTIONS:
 - {lang_instruction}
 - Provide specific details: fees, eligibility, dates, salary ranges
 - Keep response under 250 words
-- Be factual and cite official sources"""
+- Be factual and cite official sources with links"""
 
         try:
             async with httpx.AsyncClient(timeout=45.0) as client:
